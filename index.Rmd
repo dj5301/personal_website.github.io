@@ -1,30 +1,540 @@
 ---
 title: "Alvin Jiang"
-output: 
+output:
   html_document:
-    toc: true
-    toc_float: true
-    theme: cerulean
+    toc: false
+    theme: null
 ---
-![](Image/885KB copy.PNG){width=140px}
 
-## About This Site
-Hi, my name is Alvin Jiang, and I’m currently pursuing a Master’s in Biostatistics at Columbia University’s Mailman School of Public Health. This website brings together selected coursework and analysis projects and presents them as a cleaner R portfolio. Across these projects, I use R to clean messy real-world data, build reproducible reports, create clear visualizations, and apply statistical modeling to practical questions in public health and data science.
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap");
 
-Before graduate school, I built a strong foundation in analytics and information systems through internships and project work at Apple Inc. (Beijing) and other organizations. I’m especially interested in combining statistical thinking, visualization, and applied programming to support better decisions in health, business, and operations.
+body {
+  color: #edf4ff;
+  font-family: "Space Grotesk", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(127, 224, 216, 0.16), transparent 28%),
+    radial-gradient(circle at 85% 10%, rgba(255, 139, 107, 0.18), transparent 24%),
+    linear-gradient(135deg, #07101c 0%, #0b1628 48%, #10213b 100%);
+}
 
-## R Skills Highlighted
-- Data import and wrangling with `tidyverse`, `readr`, `readxl`, `janitor`, joins, reshaping, and date handling
-- Exploratory visualization with `ggplot2`, `patchwork`, and publication-style figure export
-- Interactive dashboards using `plotly` and `flexdashboard`
-- Simulation, inference, and reproducible workflows with custom functions, `broom`, and R Markdown
-- Modeling and validation using linear regression, logistic regression, bootstrap, and cross-validation
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0));
+}
 
-## Explore My Work
-- [R Projects and Skills](Project-list.html)
-- [Featured Coffee and Health Research Project](caffeine-health/index.html)
-- [Interactive Instacart Dashboard](Project.html)
-- [Interactive NYC Airbnb Dashboard](Dashboard.html)
-- [Resume](resume/resume.pdf)
+.main-container {
+  width: min(1180px, calc(100% - 28px));
+  max-width: none !important;
+  padding: 42px 0 72px;
+}
 
-Outside of academics, I enjoy teaching, building visual explanations from data, and exploring how AI tools and statistical models can work together in real decision-making settings.
+.title {
+  display: none;
+}
+
+h1, h2, h3, h4, p, li, a {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+a,
+a:hover,
+a:focus {
+  color: inherit;
+}
+
+.landing-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7fe0d8;
+}
+
+.hero-grid,
+.metrics-grid,
+.feature-grid,
+.capability-grid {
+  display: grid;
+  gap: 22px;
+}
+
+.hero-grid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  align-items: stretch;
+}
+
+.metrics-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 22px 0;
+}
+
+.feature-grid {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  margin: 22px 0;
+}
+
+.capability-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 22px 0 28px;
+}
+
+.hero-copy,
+.hero-panel,
+.metric-card,
+.feature-card,
+.capability-card,
+.closing-band {
+  border: 1px solid rgba(167, 188, 216, 0.16);
+  background: rgba(14, 28, 45, 0.78);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+
+.hero-copy,
+.hero-panel,
+.closing-band {
+  border-radius: 28px;
+}
+
+.hero-copy {
+  padding: 42px;
+}
+
+.hero-copy h1 {
+  margin: 0 0 18px;
+  font-family: "Fraunces", serif;
+  font-size: clamp(3rem, 6vw, 5.25rem);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  color: #f8fbff;
+}
+
+.hero-copy p {
+  margin: 0 0 26px;
+  font-size: 1.06rem;
+  line-height: 1.8;
+  color: #a6b7d2;
+}
+
+.action-row,
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chip-row {
+  gap: 10px;
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.action:hover,
+.chip:hover,
+.feature-card:hover,
+.capability-card:hover {
+  transform: translateY(-2px);
+}
+
+.action-primary {
+  color: #09111f !important;
+  background: linear-gradient(135deg, #ffd2c4 0%, #ff8b6b 92%);
+}
+
+.action-secondary {
+  color: #edf4ff !important;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 999px;
+  color: #edf4ff !important;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none !important;
+}
+
+.hero-panel {
+  padding: 28px;
+  display: grid;
+  gap: 20px;
+  align-content: space-between;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01)),
+    rgba(19, 35, 58, 0.94);
+}
+
+.portrait-wrap {
+  position: relative;
+  overflow: hidden;
+  min-height: 370px;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at top right, rgba(127, 224, 216, 0.18), transparent 30%),
+    linear-gradient(160deg, #14243b 0%, #0d1727 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.portrait-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  mix-blend-mode: screen;
+}
+
+.mini-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(127, 224, 216, 0.14);
+  color: #7fe0d8;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.hero-panel h3,
+.feature-card h3,
+.capability-card h3,
+.closing-band h2 {
+  margin: 0 0 10px;
+  color: #f8fbff;
+}
+
+.hero-panel p,
+.hero-panel li,
+.feature-card p,
+.capability-card p,
+.closing-band p {
+  color: #a6b7d2;
+  line-height: 1.75;
+}
+
+.hero-panel ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.metric-card,
+.feature-card,
+.capability-card {
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.metric-card span {
+  display: block;
+  margin-bottom: 10px;
+  color: #7fe0d8;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.metric-card strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 2rem;
+  color: #f8fbff;
+}
+
+.feature-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-large {
+  grid-column: span 6;
+  min-height: 290px;
+}
+
+.feature-medium {
+  grid-column: span 3;
+  min-height: 290px;
+}
+
+.feature-card::after {
+  content: "";
+  position: absolute;
+  right: -30px;
+  bottom: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12), transparent 70%);
+}
+
+.feature-label {
+  display: inline-flex;
+  margin-bottom: 18px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #f5c56b;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.feature-card .inline-link,
+.closing-band .inline-link {
+  color: #f8fbff !important;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+.capability-card {
+  background: rgba(10, 22, 37, 0.8);
+}
+
+.closing-band {
+  padding: 34px;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.section-heading {
+  margin: 52px 0 8px;
+}
+
+.section-heading h2 {
+  margin: 0 0 8px;
+  font-family: "Fraunces", serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  color: #f8fbff;
+}
+
+.section-heading p {
+  max-width: 760px;
+  color: #a6b7d2;
+  line-height: 1.8;
+}
+
+@media (max-width: 960px) {
+  .hero-grid,
+  .metrics-grid,
+  .capability-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-large,
+  .feature-medium {
+    grid-column: span 12;
+    min-height: auto;
+  }
+
+  .closing-band {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 767px) {
+  .main-container {
+    width: min(100% - 20px, 100%);
+    padding: 24px 0 56px;
+  }
+
+  .hero-copy,
+  .hero-panel,
+  .metric-card,
+  .feature-card,
+  .capability-card,
+  .closing-band {
+    border-radius: 22px;
+  }
+
+  .hero-copy,
+  .hero-panel,
+  .metric-card,
+  .feature-card,
+  .capability-card,
+  .closing-band {
+    padding: 22px;
+  }
+}
+</style>
+
+<div class="landing-shell">
+<section class="hero-grid">
+<div class="hero-copy">
+<span class="eyebrow">Biostatistics x Storytelling x Product Thinking</span>
+<h1>I turn messy data into clear, decision-ready stories.</h1>
+<p>
+I am Alvin Jiang, a Columbia Biostatistics graduate student building analytical work
+that feels both rigorous and usable. My portfolio brings together R-based reporting,
+statistical modeling, dashboard design, and health data storytelling in a format that
+feels closer to a product experience than a class archive.
+</p>
+<div class="action-row">
+<a class="action action-primary" href="Project-list.html">Browse Projects</a>
+<a class="action action-secondary" href="resume/resume.pdf">Open Resume</a>
+</div>
+<div class="chip-row" style="margin-top:22px;">
+<a class="chip" href="caffeine-health/index.html">Featured Coffee Project</a>
+<a class="chip" href="Project.html">Instacart Dashboard</a>
+<a class="chip" href="Dashboard.html">NYC Airbnb Dashboard</a>
+</div>
+</div>
+<aside class="hero-panel">
+<div class="portrait-wrap">
+<img src="Image/885KB%20copy.PNG" alt="Portrait of Alvin Jiang" />
+</div>
+<div>
+<span class="mini-badge">Now Building</span>
+<h3>Applied analytics with a polished front end</h3>
+<p>
+The visual language here borrows from the caffeine project: cinematic entry,
+sharper hierarchy, and a cleaner narrative flow. I combined that mood with a more
+current portfolio style built around glass panels, bento cards, and stronger typography.
+</p>
+<ul>
+<li>R Markdown and reproducible reporting</li>
+<li>EDA, regression, simulation, and validation</li>
+<li>Interactive dashboards and presentation-ready visuals</li>
+</ul>
+</div>
+</aside>
+</section>
+
+<section class="metrics-grid">
+<div class="metric-card">
+<span>Core Stack</span>
+<strong>R + Tidyverse</strong>
+<p>Data cleaning, reshaping, modeling, and publication-ready reporting.</p>
+</div>
+<div class="metric-card">
+<span>Favorite Deliverable</span>
+<strong>Interactive Reports</strong>
+<p>Work that explains itself clearly to both technical and non-technical readers.</p>
+</div>
+<div class="metric-card">
+<span>Current Focus</span>
+<strong>Health Data Stories</strong>
+<p>Turning public health questions into concise dashboards and decision tools.</p>
+</div>
+</section>
+
+<div class="section-heading">
+<span class="eyebrow">Selected Work</span>
+<h2>A homepage that feels like a portfolio, not a folder tree</h2>
+<p>
+I wanted the first screen to do what your caffeine project already hinted at:
+give people a strong visual first impression before they ever open a report.
+These links surface the work that best represents your style right now.
+</p>
+</div>
+
+<section class="feature-grid">
+<article class="feature-card feature-large">
+<span class="feature-label">Featured Project</span>
+<h3>Caffeine and Health Research Story</h3>
+<p>
+A polished mini-site that combines proposal, exploratory analysis, modeling,
+and final interpretation into one coherent project narrative.
+</p>
+<p><a class="inline-link" href="caffeine-health/index.html">Open project landing page</a></p>
+</article>
+
+<article class="feature-card feature-medium">
+<span class="feature-label">Dashboard</span>
+<h3>Instacart Behavior Explorer</h3>
+<p>Interactive filtering and visual summaries designed to make shopping patterns easy to scan.</p>
+<p><a class="inline-link" href="Project.html">View dashboard</a></p>
+</article>
+
+<article class="feature-card feature-medium">
+<span class="feature-label">Dashboard</span>
+<h3>NYC Airbnb Snapshot</h3>
+<p>Visual exploration of price, geography, and listing dynamics through an accessible dashboard interface.</p>
+<p><a class="inline-link" href="Dashboard.html">View dashboard</a></p>
+</article>
+
+<article class="feature-card feature-medium">
+<span class="feature-label">Portfolio Index</span>
+<h3>All R Projects</h3>
+<p>A cleaner project directory collecting coursework, analyses, and portfolio-ready outputs in one place.</p>
+<p><a class="inline-link" href="Project-list.html">Browse everything</a></p>
+</article>
+
+<article class="feature-card feature-medium">
+<span class="feature-label">Report</span>
+<h3>Coffee Report Deep Dive</h3>
+<p>The full write-up with modeling detail, evidence, and a more traditional report structure.</p>
+<p><a class="inline-link" href="caffeine-health/report.html">Read report</a></p>
+</article>
+</section>
+
+<div class="section-heading">
+<span class="eyebrow">What I Bring</span>
+<h2>Statistical thinking with clearer presentation choices</h2>
+<p>
+The strongest upgrade for this site is not just visual polish. It is the way the design
+now frames your projects as decisions, insights, and deliverables instead of isolated homework files.
+</p>
+</div>
+
+<section class="capability-grid">
+<div class="capability-card">
+<h3>Analysis</h3>
+<p>I am comfortable moving from data import through modeling, diagnostics, and interpretation with reproducible code.</p>
+</div>
+<div class="capability-card">
+<h3>Communication</h3>
+<p>I care about how people experience the output, whether that is a report, a dashboard, or a hiring manager's first 20 seconds on the page.</p>
+</div>
+<div class="capability-card">
+<h3>Execution</h3>
+<p>I like turning rough project folders into something cleaner, more intentional, and easier to maintain over time.</p>
+</div>
+</section>
+
+<section class="closing-band">
+<div>
+<span class="eyebrow">Next Step</span>
+<h2>Want the same upgrade on the project list and dashboards?</h2>
+<p>
+This homepage is now doing the branding work. The next natural pass would be to unify
+the project list page and dashboard entry points so the whole site feels like one system.
+</p>
+</div>
+<a class="action action-primary" href="mailto:dj2763@cumc.columbia.edu">Contact Me</a>
+</section>
+</div>

@@ -1,7 +1,7 @@
 name: "Personal Website"
 output_dir: "."
 navbar:
-  title: "Profile"
+  title: "Alvin Jiang"
   left:
     - text: "Home"
       href: index.html
