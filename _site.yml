@@ -9,7 +9,7 @@ navbar:
     - text: "R Projects"
       href: Project-list.html
     - text: "Resume"
-      href: about.html
+      href: resume/resume.pdf
     - icon: fa-envelope fa-lg
       href: mailto:<dj2763@cumc.columbia.edu>
     - icon: fa-github fa-lg
