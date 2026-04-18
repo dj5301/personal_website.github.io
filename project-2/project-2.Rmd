@@ -1,0 +1,309 @@
+---
+title: "Project 2"
+author: "Disheng Jiang"
+output: html_document
+---
+
+Loading library for hw2
+```{r}
+library(tidyverse)
+library(readxl)
+```
+# Problem 1
+
+1. Loading 3 datasets
+```{r}
+pols_data <-
+  read_csv("fivethirtyeight_datasets/pols-month.csv",na = c("NA",".","") ) |> 
+  janitor::clean_names()
+
+unemployment_data  <-
+  read_csv("fivethirtyeight_datasets/unemployment.csv",na = c("NA",".","") ) |> 
+  janitor::clean_names()
+
+snp_data  <-
+  read_csv("fivethirtyeight_datasets/snp.csv",na = c("NA",".","") )  |> 
+  janitor::clean_names()
+```
+
+2. Use separate( ) to break up the variable 'mon' column into integer variables 
+
+*For pols data:*
+```{r}
+d <- pols_data |> 
+  
+  separate(mon, into = c("year","month","day"), sep = "-") |> 
+  
+    mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+    ) |> 
+  
+  rename(gop = prez_gop) |> 
+  rename(dem = prez_dem) |> 
+  mutate(
+    month = case_match(
+      month,
+      1 ~ "jan",
+      2 ~ "feb",
+      3  ~ "mar", 
+      4  ~ "apr", 
+      5  ~ "may", 
+      6  ~ "jun", 
+      7  ~ "jul", 
+      8  ~ "aug", 
+      9  ~ "sep", 
+      10 ~ "oct", 
+      11 ~ "nov",
+      12 ~ "dec"
+    ),
+  month = as.factor(month)
+  ) |> 
+  select(-day) |> 
+  pivot_longer(
+    col = c(gop,dem),
+    names_to = "president",
+    values_to = "value"
+  ) |> 
+  select(-value) |> 
+  arrange(desc(year))
+```
+
+*For snap data:*
+```{r}
+p <- snp_data |> 
+  
+  separate(date, into = c("month","day","year"), sep = "/") |>
+  mutate(
+    year = as.numeric(year),
+    month = as.numeric(month),
+    day = as.numeric(day)
+    ) |> 
+  select(year,month,day,close) |> 
+  mutate(
+  year = if_else(year < 30, year + 2000, year + 1900)
+) |> 
+  mutate(
+    month = case_match(
+      month,
+      1 ~ "jan",
+      2 ~ "feb",
+      3  ~ "mar", 
+      4  ~ "apr", 
+      5  ~ "may", 
+      6  ~ "jun", 
+      7  ~ "jul", 
+      8  ~ "aug", 
+      9  ~ "sep", 
+      10 ~ "oct", 
+      11 ~ "nov",
+      12 ~ "dec"
+    ),
+  month = as.factor(month)
+  ) |> 
+  select(-day) |> 
+  arrange(desc(year))
+```
+
+*For unemployment data:*
+```{r}
+q <- unemployment_data |> 
+  pivot_longer(
+    cols = c(jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec),
+    names_to = "month",
+    values_to = "rate"
+    ) |> 
+  arrange(desc(year))
+```
+
+3. Left join pols data with snap data and unemployment data, show final data
+```{r}
+final_data <- d |> 
+  left_join(q, by = c("year", "month")) |> 
+  left_join(p, by = c("year", "month"))
+final_data
+```
+
+## Description of the dataset
+
+The month of pols.The csv data shows which party controls the US Congress and presidential elections, recorded every month. The snp.csv file has the closing prices for the S&P 500 index, which shows how well the financial markets are doing. The jobless rate.The csv file has the US's monthly unemployment rate. After cleaning and merging, we get a neat data frame called `final_data` that has `r nrow(final_data)` rows and `r ncol(final_data)` columns. The years it covers are from `r min(final_data$year)` to `r max(final_data$year)`. Some important variables are:
+
+# Problem 2
+1. Import data and initial data cleaning
+
+*Trash Wheel Data:*
+```{r}
+Trash_Wheel_data <- 
+  janitor::clean_names(read_excel("202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel") ) 
+
+Trash_Wheel_data <- Trash_Wheel_data |>
+  mutate(year = as.numeric(year)) |> 
+  select(
+    "dumpster","month","year","date","weight_tons","volume_cubic_yards",
+    "plastic_bottles","polystyrene","cigarette_butts","glass_bottles",
+    "plastic_bags","wrappers","homes_powered","sports_balls"
+  ) |> 
+  filter(!is.na(date)) |> 
+  mutate(sports_balls = as.integer(round(sports_balls))) |> 
+  mutate(wheel_name = "Mr. Trash Wheel")
+Trash_Wheel_data
+```
+
+*Professor Data:*
+```{r}
+Professor_Trash_Wheel_data <- 
+  janitor::clean_names(read_excel("202509 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel") )
+
+Professor_Trash_Wheel_data <- Professor_Trash_Wheel_data |> 
+  select(
+    "dumpster","month","year","date","weight_tons","volume_cubic_yards",
+    "plastic_bottles","polystyrene","cigarette_butts","glass_bottles",
+    "plastic_bags","wrappers","homes_powered"
+  ) |> 
+  filter(!is.na(date)) |> 
+  mutate(wheel_name   = "Professor Trash Wheel" )
+Professor_Trash_Wheel_data
+```
+
+*Gwynnda Data:*
+```{r}
+Gwynnda_Trash_Wheel_data <-
+  janitor::clean_names(read_excel("202509 Trash Wheel Collection Data.xlsx", sheet = "Gwynns Falls Trash Wheel") )
+
+Gwynnda_Trash_Wheel_data <- Gwynnda_Trash_Wheel_data |> 
+  select(
+    "dumpster","month","year","date","weight_tons","volume_cubic_yards",
+    "plastic_bottles","polystyrene","cigarette_butts",
+    "plastic_bags","wrappers","homes_powered"
+  ) |> 
+  filter(!is.na(date)) |> 
+  mutate(wheel_name   = "Gwynnda Trash Wheel" )
+Gwynnda_Trash_Wheel_data
+```
+
+2. Final data organization
+```{r}
+Final_Trash_wheel_data <- 
+  bind_rows(Trash_Wheel_data, Professor_Trash_Wheel_data, Gwynnda_Trash_Wheel_data) |> 
+  arrange(date, wheel_name)
+Final_Trash_wheel_data
+```
+
+3. Questions answer
+```{r}
+Professor_total_weight <- Professor_Trash_Wheel_data |> 
+  pull(weight_tons) |> 
+  sum(na.rm = TRUE)
+Professor_total_weight
+
+Gwynnda_202206_cigarette <- Gwynnda_Trash_Wheel_data |> 
+  filter(year(date) == 2022, month(date) == 6) |> 
+  pull(cigarette_butts) |>
+  sum(na.rm = TRUE)
+Gwynnda_202206_cigarette
+```
+
+
+## Explaination
+
+We put together and combined the data from the three collection devices, which gave us a neat data frame with `r nrow(Final_Trash_wheel_data)` observations.
+
+According to the data, Professor Trash Wheel picked up `r round(Professor_total_weight, 1)` tons of trash.
+In **June 2022**, Gwynnda picked up a total of `r scales::comma(Gwynnda_202206_cigarette)` cigarette butts.
+
+To ensure reproducibility, we imported the data using `readxl::read_excel()` with the specified worksheet and left out any rows and columns that had notes or charts while cleaning (we did this by filtering out any missing rows for `date` and `dumpster` and keeping only the columns that were relevant for trash items). We also round the *Sports Balls* variable to the nearest whole number and change it to an integer type (`as.integer(round(...))`) so that it works with other analyses.
+
+# Problem 3
+1. Import 2 dataset
+```{r}
+zip_data  <-
+  read_csv("zillow_data/Zip Codes.csv",na = c("NA",".","") ) |> 
+  janitor::clean_names()
+
+zip_zori_data  <-
+  read_csv("zillow_data/Zip_zori_uc_sfrcondomfr_sm_month_NYC.csv",na = c("NA",".","") ) |>
+  janitor::clean_names()
+```
+
+2. Initial data cleaning with 'borough' row added
+```{r}
+zip_data_1 <- zip_data |> 
+  mutate(zip_code = as.character(zip_code)) |> 
+  select(zip_code, county, neighborhood) |> 
+  arrange(zip_code, county) |> 
+    distinct(zip_code, county, neighborhood, .keep_all = TRUE) |> 
+  mutate(
+    borough = case_when(
+      county == "Bronx"    ~ "Bronx",
+      county == "Kings"    ~ "Brooklyn",
+      county == "New York" ~ "Manhattan",
+      county == "Queens"   ~ "Queens",
+      county == "Richmond" ~ "Staten Island",
+    )
+  )
+zip_data_1
+```
+
+3. Converted wide dataset to long dataset
+```{r}
+zip_zori_data_1 <- zip_zori_data |> 
+  pivot_longer(
+    x2015_01_31:x2024_08_31,
+    names_to = "date",
+    values_to = "zori"
+  ) |> 
+  mutate(date = ymd(str_remove(date, "^x"))) |> 
+  mutate(zip_code = as.character(region_name))
+zip_zori_data_1
+```
+
+4. Final data organization
+```{r}
+final_tidy <- zip_zori_data_1 |> 
+  left_join(zip_data_1, by = "zip_code") |> 
+
+  select(
+    zip_code, borough, neighborhood, date, zori, 
+    everything()
+  ) |> 
+  arrange(zip_code, date)
+final_tidy
+```
+
+5. Top 10 data
+```{r}
+x2020_2021_answer <- final_tidy |> 
+  filter(
+    (date >= ymd("2020-01-01") & date <= ymd("2020-01-31")) | 
+    (date >= ymd("2021-01-01") & date <= ymd("2021-01-31"))
+  ) |> 
+  mutate(date = format(date, "%Y-%m")) |> 
+  select(zip_code, borough, neighborhood, date, zori) |> 
+  pivot_wider(
+    names_from = date, 
+    values_from = zori
+    ) |> 
+  rename(Y2020 = `2020-01`, Y2021 = `2021-01`) |> 
+  mutate(
+    change = Y2021 - Y2020,
+    change_percent = round(100 * change / Y2020 , 2)
+  ) |> 
+  arrange(change)
+
+top10_change <- x2020_2021_answer |> 
+  slice_head(n = 10) |> 
+  select(zip_code, borough, neighborhood, Y2020, Y2021, change, change_percent)
+
+top10_change
+```
+
+## Explaination
+
+`r nrow(final_tidy)`  observations, `r ncol(final_tidy)` variables, `r dplyr::n_distinct(final_tidy$zip_code)` distinct zip code, and `r dplyr::n_distinct(final_tidy$neighborhood, na.rm = TRUE)` distinct community
+
+I worked to get clear of the duplicated ZIP table before the merge. This fixed rare duplicate rows that were caused by cross-county mistakes, like 11201 (which should have gone to Kings/Brooklyn) and 10463 (which should have gone to the Bronx). This made sure that each ZIP only had one record per month after the merge.
+
+Zillow's ZORI often doesn't include ZIPs for PO Boxes, work units, airports, and corporate buildings because they don't have enough rental samples available. There may be a few "border/suburban ZIPs" (like 115xx) on the ZIP list, but they are not in the NYC five-county area or the Zillow NYC dataset, so they are also missing.
+
+Some ZIPs didn't have ZORIs in the beginning (2015–2017), but the number of ZORIs has grown every year since then. So, when you compare years or months, it's best to use fixed months and leave out any missing data.

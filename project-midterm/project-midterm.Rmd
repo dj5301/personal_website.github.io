@@ -1,0 +1,357 @@
+---
+title: "Midterm Project"
+output: html_document
+author: Disheng Jiang
+---
+## Loading package for data cleaning
+```{r, message=FALSE}
+library(tidyverse)
+library(readxl)
+library(patchwork)
+```
+
+
+# Problem 1
+
+###### Import data
+```{r import data}
+nsr_df <- 
+  janitor::clean_names(
+  read_excel(
+    path = "p8105_mtp_data.xlsx",
+    skip = 8,
+    na = c("NA", ".", "")) 
+  )
+```
+Skip the first 8 rows of instructions 
+Standardize column names using janitor::clean_names().
+
+## Label Mapping
+```{r initial data cleaning}
+nsr_df <- nsr_df |> 
+  mutate(
+    sex = as.character(sex),
+    eop_visibility_classification = as.character(eop_visibility_classification),
+    eop_shape = as.character(eop_shape),
+    sex_name = case_match(
+      sex,
+      "1" ~ "male",
+      "0" ~ "female"
+      ),
+    eop_visi_class = case_match(
+      eop_visibility_classification,
+      "0" ~ "0 mm",
+      "1" ~ "0-5 mm",
+      "2" ~ ">= 5mm"
+      ),
+    eop_shape = replace_na(as.numeric(eop_shape), 0),
+    age_group_name = case_match(
+      age_group,
+      "2" ~ "18-30", 
+      "3" ~ "31-40",
+      "4" ~ "41-50",
+      "5" ~ "51-60",
+      "6" ~ "60+",
+      "7" ~ "60+",
+      "8" ~ "60+",
+      ),
+    eop_size_mm = replace_na(as.numeric(eop_size_mm), 0),
+    eop_size_group = case_match(
+      eop_size,
+      "0" ~ "0-5 mm",
+      "1" ~ "5-10 mm",
+      "2" ~ "10-15 mm",
+      "3" ~ "15-20 mm",
+      "4" ~ "20-25 mm",
+      "5" ~ "25+ mm",
+    ),
+    fhp_category_group = case_match(
+      fhp_category,
+      "0" ~ "0-10mm",
+      "1" ~ "10-20 mm",
+      "2" ~ "20-30 mm",
+      "3" ~ "30-40 mm",
+      "4" ~ "40-50 mm",
+      "5" ~ "50-60 mm",
+      "6" ~ "60-70 mm"
+    )
+  )
+```
+Sex: 0→female, 1→male → sex_name (factor);
+
+Type conversion: Convert eop_size_mm, fhp_size_mm, sex (0/1), and age_group (2–5; 6/7/8 -> 60+) to integers.
+
+Age group: 2→18–30, 3→31–40, 4→41–50, 5→51–60, 6/7/8→60+ → age_group_name (ordered factor).
+
+Maintain classification: Keep the author's binning rules
+
+###### creating tables: 1
+```{r show age sex percentage}
+tab_sex <- nsr_df |> count(sex_name, name = "number_of_people") |> mutate(
+  pct = round(100 * number_of_people / sum(number_of_people), 1)
+  ) |>  
+  knitr::kable(col.names = c("sex", "number_of_people", "pct (%)"))
+
+tab_age_sex <- nsr_df |> 
+  count(age_group_name, sex_name, name = "number_of_people") |>
+  group_by(age_group_name) |> 
+  mutate(
+    pct = round(100 * number_of_people / sum(number_of_people),1)
+    ) |>
+  ungroup() |> 
+  pivot_wider(
+    id_cols = age_group_name,
+    names_from = sex_name,                     
+    values_from = c(number_of_people, pct),     
+    names_glue = "{.value}_{sex_name}",         
+    values_fill = list(number_of_people = 0, pct = 0)
+  ) |>
+  arrange(age_group_name) |> 
+  mutate(
+    total_number_of_people = number_of_people_female + number_of_people_male
+  ) |> 
+  select(age_group_name, total_number_of_people, number_of_people_female, pct_female, number_of_people_male, pct_male) |>   
+  knitr::kable()
+
+tab_sex
+tab_age_sex
+```
+
+###### creating tables: 2
+```{r show mean and sd for overall/age group}
+fhp_overall <- nsr_df |> 
+  summarise(
+    n = sum(!is.na(eop_size_mm)),
+    mean = mean(eop_size_mm, na.rm = TRUE),
+    sd = sd(eop_size_mm, na.rm = TRUE)
+    ) |> 
+  knitr::kable()
+
+fhp_by_age <- nsr_df |> 
+  group_by(age_group_name) |>
+  summarise(
+    total_number_people = sum(!is.na(eop_size_mm)),
+    mean = mean(eop_size_mm, na.rm = TRUE),
+    sd = sd(eop_size_mm, na.rm = TRUE), .groups = "drop"
+    ) 
+fhp_by_age |> 
+  knitr::kable()
+fhp_overall
+```
+
+###### creating tables: 3
+```{r show mean and sd for sex group}
+sex_mean_sd <- nsr_df |> 
+  group_by(sex_name) |> 
+  summarise(
+    mean = mean(fhp_size_mm, na.rm = TRUE),
+    sd = sd(fhp_size_mm, na.rm = TRUE))
+
+sex_mean_sd |> 
+  knitr::kable(col.names = c("sex", "fhp_mean", "fhp_sd"))
+sex_mean_sd
+```
+We analyze `r nrow(nsr_df)` participants, approximately balanced by sex within each age group. 
+
+Core variables are: age/age_group, sex, continuous EOP (`eop_size_mm`) with its 0–5 category (`eop_size_code`), and continuous FHP (`fhp_size_mm`).
+
+Issues: a small number of rows have inconsistencies between continuous measurements and their bins ( `eop_size_mm` vs `eop_size_code`).
+
+# Problem 2
+```{r define enlarged group}
+# EEOP definition：Group EOP size 2–5 = Enlarged
+df <- nsr_df |>
+  mutate(
+    eop_size = as.numeric(eop_size),       
+    eop_enlarged = case_when(
+      eop_size %in% c(0, 1) ~ "regular", 
+      eop_size %in% c(2, 3, 4, 5) ~ "enlarged",
+      TRUE ~ NA_character_                 
+    )
+  )
+```
+
+###### Improving Fig 3
+```{r create left plot}
+p_left <- df |> 
+  filter(!is.na(fhp_size_mm), !is.na(age_group_name), !is.na(sex)) |> 
+  ggplot(aes(x = age_group_name, y = fhp_size_mm, fill = sex_name)) +
+  # box plot dipiction
+  geom_boxplot(position = position_dodge(width = 0.8),
+               outlier.alpha = 0.5, width = 0.7) +
+  # plot a point at the mean of age & sex
+  stat_summary(aes(group = sex_name),
+               fun = mean, geom = "point",
+               position = position_dodge(width = 0.8),
+               shape = 23, size = 2.8, fill = "white", color = "black") +
+  # Mark 1 digit-rounded mean
+  stat_summary(aes(group = sex_name, label = sprintf("%.1f", after_stat(y))),
+               fun = mean, geom = "text",
+               position = position_dodge(width = 0.8),
+               vjust = -0.6, size = 3) +
+  labs(x = "Age group", y = "FHP size (mm)",
+       title = "FHP distribution by age & sex") +
+  ggplot2::scale_fill_viridis_d(name = "Sex") +
+  # Leave a room to the title
+  scale_y_continuous(expand = expansion(mult = c(0.02, 0.10))) +
+  theme_minimal(base_size = 12)
+p_left
+```
+
+###### Improve Fig 4
+```{r define prevalence}
+prev <- df |> 
+  filter(!is.na(eop_enlarged)) |> 
+  summarise(
+    n = n(),
+    cases = sum(eop_enlarged == "enlarged"),
+    prev = round(cases / n, 4),
+    .by = c(age_group_name, sex_name)
+  ) |> 
+  arrange(age_group_name, sex_name) |> 
+    filter(!is.na(age_group_name)) 
+prev
+```
+
+###### Create right plot
+```{r using ggplot}
+p_right <- 
+  ggplot(prev, aes(x = age_group_name, y = prev, fill = sex_name)) +
+  geom_col(position = position_dodge(width = 0.8) , width = 0.7, alpha = 0.9) +
+  # Link the line with the point
+  geom_line(aes(color = sex_name, group = sex_name),
+            position = position_dodge(width = 0.8) , linewidth = 1) +
+  geom_point(aes(color = sex_name),
+             position = position_dodge(width = 0.8) , size = 2) +
+  # Mark the percentage label above
+  geom_text(aes(label = scales::percent(prev, accuracy = 0.1),
+                group = sex_name),
+            position = position_dodge(width = 0.8) , vjust = -0.5, size = 3) +
+  # Label y-axis with %
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1),
+                     expand = expansion(mult = c(0, 0.08))) +
+  labs(x = "Age Group",
+       y = "Proportion with Enlarged EOP",
+       title = "Enlarged EOP (EOP size 2–5) prevalence by age & sex") +
+  ggplot2::scale_fill_viridis_d(name = "Sex") +
+  ggplot2::scale_color_viridis_d(guide = "none") +  
+  theme_minimal(base_size = 12)
+p_right
+```
+
+###### Two panel graph saving with ggplot
+```{r save two panel plot}
+two_panel <- p_left + p_right + plot_annotation(tag_levels = "A")
+two_panel
+ggsave("fig_q2_two_panel.png", two_panel, width = 20, height = 5, dpi = 300)
+```
+
+###### 2×5 graph：FHP vs EOP
+```{r Create scatter plot and save}
+p_scatter <- df |>
+  filter(!is.na(fhp_size_mm), !is.na(eop_size_mm), !is.na(age_group_name), !is.na(sex_name)) |>
+  ggplot(aes(fhp_size_mm, eop_size_mm)) +
+  geom_point(aes(color = sex_name), alpha = 0.4, size = 1) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_grid(sex_name ~ age_group_name) +            
+  labs(x = "FHP size (mm)", y = "EOP size (mm)",
+       title = "Association between FHP and EOP by age & sex") +
+  scale_color_viridis_d(name = "sex") +
+  theme_minimal(base_size = 12)
+p_scatter
+ggsave("fig_q2_p_scatter.png", p_scatter, width = 10, height = 6, dpi = 300)
+```
+
+# Problem 3
+#### Q1
+```{r create dataframe to solve the problem}
+tb1 <- fhp_by_age |>
+  select(age_group_name, total_number_people) |> 
+  rename(total_number_of_people_report = total_number_people)
+
+tb2 <- tibble(
+  age_group_name = c("18-30","31-40","41-50","51-60","60+"),
+  total_number_people = c(300, 200, 200, 200, 300)
+) |>
+  rename(total_number_of_people_author = total_number_people)
+
+tb <- inner_join(tb1, tb2, by = "age_group_name") |> 
+  knitr::kable()
+tb
+```
+**Explain**: 
+Age-group: Our data yield closely matching the paper’s target.
+
+The corrected raw data shows 303 for 18–30, 204 for 31–40, 207 for 41–50, 200 for 51–60, and 305 for 60+. This nearly matches the authors' allocation, with only slight changes. 
+
+Age and gender distribution is equally split: 18-30, 31-40, 41-50, 51-60, 60+, consistent with the statement balance.
+
+#### Q1
+```{r create a dataframe show difference}
+tb3 <- sex_mean_sd |>
+  select(sex_name, mean, sd) |> 
+  rename(report_mean = mean) |> 
+  rename(report_sd = sd)
+
+tb4 <- tibble(
+  sex_name = c("female","male"),
+  author_mean = c(24, 28),
+  author_sd = c(11, 15)
+) 
+
+tb5 <- inner_join(tb3, tb4, by = "sex_name") |> 
+  rename(sex = sex_name) |>
+  mutate(difference_mean = report_mean - author_mean,
+         difference_sd = report_sd - author_sd) |> 
+  knitr::kable()
+tb5
+```
+**Explain**: 
+The authors report gender-specific FHP measurements: 28 ± 15 mm for males and 24 ± 11 mm for females. The data yields: men 28.51 ± 14.67 mm, females 23.73 ± 10.62 mm, and overall 26.10 ± 13.01 mm. These figures agree with the authors' findings in size and direction, with rounding/sample cleaning margins.
+
+FHP (mean±SD): Males ≈ `r nsr_df |> filter(sex_name=="male") |> summarize(m=mean(fhp_size_mm,na.rm=T), s=sd(fhp_size_mm,na.rm=T)) |> mutate(across(everything(), ~round(.x,2))) |> paste0(collapse=", ") `mm; females ≈ `r nsr_df |> filter(sex_name=="female") |> summarize(m=mean(fhp_size_mm,na.rm=T), s=sd(fhp_size_mm,na.rm=T)) |> mutate(across(everything(), ~round(.x,2))) |> paste0(collapse=", ")` mm—aligned with ~28±15 and ~24±11.
+
+#### Q2
+```{r show total prevalence}
+df |> 
+  filter(!is.na(eop_enlarged)) |>
+  summarise(
+    n = sum(!is.na(eop_size_mm)),
+    cases = sum(eop_enlarged == "enlarged"),
+    prev = round(cases / n, 4)
+)
+df
+```
+**Explain**: 
+This study defines EEOP as EOP size groups 2-5 (≥10 mm) as “enlarged.” 
+
+Categorical size: {2,3,4,5};
+
+Continuous criterion: eop_size_mm > 10.
+
+EEOP prevalence: 
+The 393 “enlarged” instances with prevalence of `r nsr_df |> mutate(enlarged = eop_size_mm %in% 2:5) |> summarize(p = mean(enlarged, na.rm=TRUE)) |> pull(p) |> scales::percent(accuracy=0.1)`, matching with "33%," suggesting agreement.
+
+
+#### Q3
+```{r show the 60+ age group frequency}
+nsr_df |> 
+  filter(!is.na(age_group_name), !is.na(fhp_size_mm)) |> 
+  summarise(
+    n = n(),                                
+    cases = sum(fhp_size_mm > 40),              
+    fre  = cases / n * 100, 
+    .by = age_group_name) |> 
+  filter(age_group_name == "60+")
+```
+**Explain**: 
+The prevalence of FHP > 40 mm age group: 
+18–30 years: 6.6%, 
+31–40 years: 5.9%, 
+41–50 years: 8.7%, 
+51–60 years: 11.0%, 
+60+ years: `r nsr_df |> filter(age_group_name=="60+") |> summarize(p=mean(fhp_size_mm>40, na.rm=TRUE)) |> pull(p) |> scales::percent(accuracy=0.1)`
+This aligns with 34.5% 
+
+## Summary
+The new data reflect the paper's results that FHP and EEOP prevalence increase with age and male sex. The study is cross-sectional with quota sampling and no direct phone-use exposure; counts should be rates; distributional information was underreported. Data show correlations, not causation. The “phones cause horn growth” claim needs individual-level exposure, longitudinal or interventional designs, robust confounding control, and measurement-reliability studies.

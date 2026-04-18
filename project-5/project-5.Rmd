@@ -1,0 +1,291 @@
+---
+title: "Project 5"
+author: "Disheng Jiang"
+output: html_document
+---
+```{r message = FALSE}
+library(tidyverse)
+library(broom)
+```
+
+# Problem 1
+```{r}
+set.seed(123)  # to replicate the result
+```
+
+### 1) Single simulation (TRUE=there is at least one pair)
+```{r}
+has_match_once <- function(n) {
+  
+  bdays <- sample.int(365, size = n, replace = TRUE)
+  anyDuplicated(bdays) > 0
+  
+}
+```
+
+### 2) For n=2..50，Every n repeat 10000 times and estimate the probability
+```{r}
+ns <- 2:50
+n_trials <- 10000
+```
+
+
+### 3) use replicate() + mean() to calculate every n's probability
+```{r}
+prob_sim <- sapply(ns, function(n) {
+  
+  mean(replicate(n_trials, has_match_once(n)))
+  
+})
+```
+
+
+### 4) The probability that "no one has the same birthday".
+```{r}
+prob_exact <- 1 - sapply(ns, function(n) {
+  
+  if (n > 365) return(0)              
+  prod((365:(365 - n + 1)) / 365)    
+  
+})
+```
+
+
+### 5) Create a dataframe for plot
+```{r}
+df <- tibble(
+  n = ns,
+  sim = prob_sim,
+  exact = prob_exact
+)
+df
+```
+
+### 6) Use ggplot to visualize the result
+```{r}
+birthday_plot <-
+ggplot(df, aes(n, sim)) +
+   geom_point() + geom_line() +
+   geom_line(aes(y = exact), linetype = 2) +
+   labs(x = "population n", y = "At least two people has same birthday",
+       title = "Birthday Problem: estimate simulation vs theoritical value (All 365 days, Uniform distribution)",
+        subtitle = paste0("replicated n ", n_trials, " times")) +
+   theme_minimal(base_size = 12)
+
+birthday_plot
+```
+
+### Answer for question
+
+First, the chance that two people in a small group share the same birthday is very close to 0. Second, the chance goes up as n goes up and is greater than 0.5 when n is about 23. Lastly, the chance of sharing a birthday gets closer to 1 for groups of about 50 people, which means it's very likely that at least two people share a birthday. 
+
+
+# Problem 2
+
+### 1) Create 5000 times of simulation
+```{r}
+sim_one_mu <- function(mu, n = 30, sigma = 5, n_sim = 5000) {
+  
+  replicate(n_sim, {         
+    x  <- rnorm(n, mean = mu, sd = sigma)   
+    tt <- t.test(x, mu = 0)
+
+    tibble(
+      mu_hat  = mean(x),
+      p.value = tt$p.value,
+      true_mu = mu
+    )
+  }, simplify = FALSE) |>
+    bind_rows()
+}
+
+mus <- 0:6
+results <- purrr::map_df(mus, sim_one_mu)
+
+```
+
+### 2) Set up the data for the plot
+```{r}
+power_df <- results %>%
+  group_by(true_mu) %>%
+  summarise(power = mean(p.value < 0.05))
+
+mean_mu_df <- results %>%
+  group_by(true_mu) %>%
+  summarise(avg_mu_hat = mean(mu_hat))
+
+mean_reject_df <- results %>%
+  filter(p.value < 0.05) %>%
+  group_by(true_mu) %>%
+  summarise(avg_mu_hat_reject = mean(mu_hat))
+```
+
+### 3) Plot proportion of times the null was rejected (power)
+```{r}
+power_df <- results %>%
+  group_by(true_mu) %>%
+  summarise(power = mean(p.value < 0.05))
+
+ggplot(power_df, aes(x = true_mu, y = power)) +
+  geom_line() +
+  geom_point(size = 1.8) +
+  labs(
+    x = "True μ",
+    y = "Power (P reject H0)",
+    title = "Power Curve for One-Sample t-Test (n = 30, σ = 5)"
+  ) +
+  theme_minimal()
+```
+It's easier to tell the difference when the effect size is bigger, which means it has more power.The power and impact size are positively correlated in the graph. The likelihood of rejecting the null hypothesis when it is incorrect grows in direct proportion to the effect magnitude. The reason for this is because when the effect size increases, the t-statistic also increases, further displacing the sample mean distribution from the null value. More rejections and a higher power are the outcomes of very large t-values. 
+
+### 4) Plot the true value of μ on the x axis. 
+```{r}
+mean_mu_df <- results %>%
+  group_by(true_mu) %>%
+  summarise(avg_mu_hat = mean(mu_hat))
+
+ggplot(mean_mu_df, aes(true_mu, avg_mu_hat)) +
+  geom_point(size = 1.8, color = "green") +
+  geom_line(color = "green") +
+  labs(
+    x = "True μ",
+    y = "Average μ̂ (all samples)",
+    title = "Mean of μ̂ Accross All Simulated Datasets"
+  ) +
+  theme_minimal()
+```
+The group mean μ is a fair way to guess what the real mean is.
+
+### 5) Plot only in samples for which the null was rejected 
+```{r}
+mean_reject_df <- results %>%
+  filter(p.value < 0.05) %>%
+  group_by(true_mu) %>%
+  summarise(avg_mu_hat_reject = mean(mu_hat))
+
+ggplot(mean_reject_df, aes(true_mu, avg_mu_hat_reject)) +
+  geom_point(size = 1.8, color = "red") +
+  geom_line(color = "red") +
+  labs(
+    x = "True μ",
+    y = "Average μ̂ | H0 rejected",
+    title = "Mean of μ̂ Among Datasets Where H0 is Rejected"
+  ) +
+  theme_minimal()
+```
+
+### Answer for the question
+
+The actual underlying value of μ is not consistently matched by the average of the estimated averages across the simulations that reject H₀. This is due to selection effects, which are introduced when the computation is based on a filtered subset instead of all samples.
+
+Only samples with very high 𝜇̂ will provide a significant result when the real μ is modest, indicating insufficient statistical power. Consequently, the conditional mean of 𝜇̂ becomes inflated in an unnatural way.
+
+With an increase in the real ν and a stronger test, almost all samples result in the rejection of H₀. The distortion is reduced and the conditional average is brought closer to the actual ν when fewer extreme samples are required to meet the significance threshold in that case.
+
+# Problem 3
+
+### 1) Load Data
+```{r message = FALSE}
+homicide_data <- read_csv("homicide-data.csv")
+```
+One row per homicide case from 50 significant U.S. cities is in the raw dataset.
+Some major variables are:
+
+Variable Description 
+uid: Unique identification for each homicide case 
+reported_date: Homicide report date
+victim_last, victim_first: Name of victim
+victim_race, victim_age, victim_sex: Demographic data
+city, state: city and state of the homicide 
+lat, lon: Location of incident
+disposition: Case status (“Closed by arrest”, “Open/No arrest”, “Closed without arrest”).
+
+For this project, unsolved killings have:
+
+"Closed without arrest"
+"Open/No arrest"
+
+
+### 2) Create city_state variable and define "unsolved" categories
+```{r}
+h <- homicide_data %>%
+  mutate(city_state = paste(city, state, sep = "_"))
+
+unsolved_levels <- c("Closed without arrest", "Open/No arrest")
+```
+
+### 3) Summarize within each city
+```{r message = FALSE}
+city_summary <- h %>%
+  mutate(unsolved = disposition %in% unsolved_levels) %>%
+  group_by(city_state) %>%
+  summarise(
+    total = n(),
+    unsolved = sum(unsolved)
+  )
+knitr::kable(city_summary)
+```
+
+### 4) Filter for Baltimore
+```{r}
+bal <- city_summary %>% 
+  filter(city_state == "Baltimore_MD")
+
+bal_test <- prop.test(bal$unsolved, bal$total)
+
+bal_tidy <- tidy(bal_test)
+
+# Extract key results
+bal_estimate <- bal_tidy$estimate
+bal_ci_lower <- bal_tidy$conf.low
+bal_ci_upper <- bal_tidy$conf.high
+
+bal_table <- tibble(
+  estimate = bal_tidy$estimate,
+  ci_lower = bal_tidy$conf.low,
+  ci_upper = bal_tidy$conf.high
+)
+
+
+knitr::kable(bal)
+knitr::kable(bal_table)
+```
+The projected percentage of unsolved killings in Baltimore, MD is `r bal_tidy$estimate`. 
+The 95% confidence interval is (`r bal_tidy$conf.low`, `r bal_tidy$conf.high`)
+
+### 5) Function to run prop.test for one row
+```{r}
+run_test <- function(unsolved, total) {
+  
+  tidy(prop.test(unsolved, total))
+  
+}
+```
+
+### 6) Apply to ALL cities
+```{r}
+city_results <- city_summary %>%
+  mutate(test = map2(unsolved, total, run_test)) %>%
+  unnest(test) %>%
+  select(city_state, total, unsolved, estimate, conf.low, conf.high)
+
+knitr::kable(city_results)
+```
+
+### 7) Visualize the result
+```{r}
+city_results %>%
+  arrange(estimate) %>%
+  mutate(city_state = factor(city_state, levels = city_state)) %>%
+  ggplot(aes(x = city_state, y = estimate)) +
+  geom_point() +
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high), width = 0.2) +
+  coord_flip() +
+  labs(
+    title = "Proportion of Unsolved Homicides by City",
+    x = "City",
+    y = "Estimated proportion unsolved (95% CI)"
+  ) +
+  theme_minimal(base_size = 8)
+
+```
