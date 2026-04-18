@@ -1,0 +1,73 @@
+---
+title: "R Projects and Skills"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cerulean
+---
+
+## Portfolio Overview
+
+These assignments show a progression from foundational R programming to end-to-end statistical analysis. Taken together, they highlight how I use R to import and clean data, reshape messy files into tidy datasets, produce static and interactive visualizations, run simulations, fit regression models, and communicate results through reproducible HTML reports.
+
+## Core R Skills Demonstrated
+
+- **Data import and cleaning**: `readr`, `readxl`, `janitor`, missing-value handling, recoding, and joins
+- **Data transformation**: `dplyr`, `tidyr`, `separate()`, `pivot_longer()`, `pivot_wider()`, grouped summaries
+- **Visualization**: `ggplot2`, `patchwork`, `plotly`, `flexdashboard`, figure saving for reports
+- **Statistical inference**: `t.test()`, `prop.test()`, confidence intervals, and interpretation of uncertainty
+- **Simulation and resampling**: custom functions, `replicate()`, Monte Carlo simulation, bootstrap
+- **Modeling and validation**: `lm()`, `glm()`, `broom`, `modelr`, cross-validation, and RMSE comparison
+- **Communication**: R Markdown workflows, project organization, and portfolio-style reporting
+
+## Selected Coursework
+
+### Project 1: Foundations in R Data Structures and Plotting
+**Focus:** Explore weather data, compute summary statistics, and understand how R handles numeric, logical, character, and factor variables.
+
+**R skills used:** tibble creation, summary statistics, `ggplot2`, saving plots, and type coercion.
+
+[View report](project-1/project-1.html)
+
+### Project 2: Data Cleaning, Reshaping, and Integration
+**Focus:** Clean and merge political/economic time-series data, process multi-sheet Trash Wheel Excel data, and reorganize Zillow rent data for NYC ZIP codes.
+
+**R skills used:** `read_csv()`, `read_excel()`, `janitor::clean_names()`, `separate()`, `pivot_longer()`, `left_join()`, date parsing, and tidy data design.
+
+[View report](project-2/project-2.html)
+
+### Project 3: Exploratory Data Analysis Across Multiple Datasets
+**Focus:** Analyze Instacart orders, summarize NYC rental trends, and study NHANES accelerometer data with demographic information.
+
+**R skills used:** grouped summaries, faceted graphics, `patchwork`, table creation, time-based activity profiles, and multi-panel visualization.
+
+[View report](project-3/project-3.html)
+
+### Midterm Project: Research-Style Midterm Analysis
+**Focus:** Recode and analyze FHP/EOP data, build descriptive tables, and create comparison plots that mirror a small applied research workflow.
+
+**R skills used:** variable recoding, grouped descriptive statistics, `ggplot2`, `patchwork`, figure annotation, and structured analytical reporting.
+
+[View report](project-midterm/project-midterm.html)
+
+### Project 5: Simulation and Statistical Inference
+**Focus:** Simulate the birthday problem, study power and selective inference in one-sample t-tests, and estimate unsolved homicide proportions by city.
+
+**R skills used:** writing reusable functions, `replicate()`, Monte Carlo simulation, `broom`, hypothesis testing, and uncertainty visualization.
+
+[View report](project-5/project-5.html)
+
+### Project 6: Regression, Bootstrap, and Model Comparison
+**Focus:** Fit city-level logistic regression models for homicide clearance, bootstrap weather models, and compare birthweight prediction models with cross-validation.
+
+**R skills used:** `glm()`, `lm()`, `broom::tidy()`, `modelr::bootstrap()`, `crossv_mc()`, residual analysis, and predictive model evaluation.
+
+[View report](project-6/project-6.html)
+
+## Interactive Work
+
+In addition to static reports, I also built interactive dashboards to explore ordering behavior and short-term housing data in a more visual format.
+
+- [Instacart Dashboard](Project.html)
+- [NYC Airbnb Dashboard](Dashboard.html)

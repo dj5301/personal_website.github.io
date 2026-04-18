@@ -1,0 +1,57 @@
+---
+title: "Profile"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+#### EDUCATION 
+**_Columbia University_** *Expected Aug 2025-May 2027*<br> 
+- M.S. in Biostatistics, PH Data Science <br>
+<br>
+**_Pennsylvania State University_**  *Aug 2021-May 2025*<br>
+- B.S. in Supply Chain and Information Systems GPA: 3.77/4.0 (Dean’s list)<br>
+- Minor in Information System Management; Certificate in Enterprise Resource Planning with SAP<br>
+- Capstone Project: Integrated Business Analysis Decision with Capsim - Analyzed real-world business cases by integrating operational and financial data; applied tools such as present value analysis, break-even analysis, and financial ratio analysis.<br> <br>
+
+#### PROFESSIONAL EXPERIENCES
+   
+**_Data Analyst Intern_** <br>
+**_Apple Inc._** *Jun 2025-Aug 2025* <br>
+- Redesigned and relaunched the AE/SE Rating system using Python, Excel, and Tableau, standardizing SOPs to visualize 1,441+ staff performance and improve reseller prioritization, analyzed and presented the result using keynote. <br>
+- Delivered a Marketing Data Tracking project with Python + Tableau, analyzing 260+ schools/universities to track lead-to-customer conversions and enhance campaign ROI, Constructing a keynote for presentation of the dashboard function. <br>
+- Automated the Campuses Ambassador Project with a Python + Selenium pipeline and AutoNavi API, producing structured Excel reports covering 172 campuses. <br>
+- Built a localized LLM prototype (DeepSeek-r1:8b via Ollama, Docker, Dify), a self-initiated project adopted for testing.<br>
+<br>
+   
+**_Information System Intern_** <br>
+**_Yonyou Software Co.,Ltd_** *Jun 2024-Aug 2024* <br>
+- Streamlined routine based ERP news update process using Yonyou MK system, improving accuracy/timeliness and raising client satisfaction by 14.6% over the previous candidate. <br>
+- Built ERP content channel workflows with automation & QC, drafting instruction papers in MS Word to improve messaging consistency and reduce update time by 30%. <br>
+- Made invitation through Adobe illustrator and photoshop, inviting 30+ celebrities to the Innovation Conference, editing an initial promotional video using final cut pro, coordinating 50+ stakeholders for the 2024 Innovation Conference, ensuring consistent branding and successfully hosting a ‘China Economic View’ reporter visit.<br>
+- Initiate ERP branding strategy, securing a first step partnership with ByteDance to expand product reach.
+<br>
+<br>
+**_Project Intern_**<br>
+**_Shanghai AID Technology Co., Ltd_** *Jun 2022-Aug 2022*<br>
+- Contributed to the mobile nursing software project for the International Peace Maternity and Child Health Hospital by analyzing patient admission and bed occupancy data to inform software optimization, using descriptive statistics and linear regression models.<br>
+- Provided recommendations for mobile nursing software allocation, projecting a 20% budget savings for the client.<br> <br>
+
+
+
+#### RESEARCH EXPERIENCE
+
+**_Smeal College of Business CSCR_** <br>
+*Sep 2024-Dec 2024* <br>
+- Comparison of Machine Learning in Supply Chain Disruption Prediction: How Government Procurement Offical Can Align ESG Standards with Purchasing.<br>
+- Reviewing over 50 online sources, compiled a 14-page (3,770-word) white paper on ESG practices. Several policy proposals were implemented. The experiment helped the university get a follow-up research grant to expand on its findings.<br> <br>
+
+#### SKILLS & CERTIFICATIONS
+**_Technical Skills_**: Python (Intermediate); R(Intermediate); SQL(Intermediate); Microsoft (Excel, PowerPoint, Word, Access);Enterprise Resource Planning (SAP); RapidMiner <br>
+
+**_Visualization_**: Tableau (Professional); Gephi; Adobe Photoshop & Illustrator; Final Cut Pro <br>
+
+**_Languages_**: Chinese (Native); English (Proficient); Japanese (Beginning-level)<br>
+
+**_Certifications and Additional Awards_**: Lean Six Sigma-Yellow Belt (Completed); Apple Inc. Certified Support Professional(Awarded); DataCamp- Intermediate Python (Completed); Coursera-Mathematics for Machine Learning, Linear Algebra from Elementary to Advanced; Wharton certificate in Applied Value Investing (In Progress)

@@ -1,0 +1,102 @@
+---
+title: "Instacart Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(p8105.datasets)
+library(forcats)
+library(plotly)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+dept_counts <- instacart %>%
+  count(department, name = "n") %>%
+  mutate(department = fct_reorder(department, n))  
+
+p_bar <- plot_ly(
+  dept_counts,
+  x = ~n, y = ~fct_reorder(department, n),
+  type = "bar", orientation = "h",
+  color = ~department, colors = "viridis",
+  text = ~n, textposition = "outside",
+  hovertemplate = "Department: %{y}<br>Count: %{x}<extra></extra>"
+) %>%
+  layout(
+    title = "Order Count by Department",
+    xaxis = list(title = "Count"),
+    yaxis = list(title = "Department")
+  )
+
+p_bar
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+snacks_df <- instacart %>%
+  filter(department == "snacks", !is.na(order_hour_of_day))
+
+snacks_hour <- snacks_df %>%
+  count(order_hour_of_day, name = "n") %>%
+  mutate(pct = 100 * n / sum(n))
+
+p_snacks_grad_count <- plot_ly(
+  snacks_hour,
+  x = ~order_hour_of_day,
+  y = ~n,
+  type = "bar",
+  color = ~n,
+  hoverinfo = "text"
+) %>%
+  layout(
+    title = "Snacks Orders by Hour (Gradient by Count)",
+    xaxis = list(title = "Order Hour of Day (0–23)", tick0 = 0, dtick = 3),
+    yaxis = list(title = "Count"),
+    bargap = 0.05
+  )
+
+p_snacks_grad_count
+```
+
+### Chart C
+
+```{r}
+top_depts <- instacart %>%
+  count(department, sort = TRUE) %>%
+  slice_head(n = 8) %>%
+  pull(department)
+
+box_df <- instacart %>%
+  filter(department %in% top_depts)
+
+
+p_box <- plot_ly(
+  box_df,
+  x = ~department,
+  y = ~order_hour_of_day,
+  type = "box",
+  color = ~department, colors = "viridis",
+  boxpoints = "outliers",
+  hovertemplate = "Department: %{x}<br>Order hour: %{y}<extra></extra>"
+) %>%
+  layout(
+    title = "Order Hour Distribution by Department (Top 8)",
+    xaxis = list(title = "Department"),
+    yaxis = list(title = "Order Hour of Day", rangemode = "tozero")
+  )
+
+p_box
+```

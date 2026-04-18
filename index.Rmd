@@ -1,0 +1,29 @@
+---
+title: "Alvin Jiang"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    theme: cerulean
+---
+![](Image/885KB copy.PNG){width=140px}
+
+## About This Site
+Hi, my name is Alvin Jiang, and I’m currently pursuing a Master’s in Biostatistics at Columbia University’s Mailman School of Public Health. This website brings together selected coursework and analysis projects and presents them as a cleaner R portfolio. Across these projects, I use R to clean messy real-world data, build reproducible reports, create clear visualizations, and apply statistical modeling to practical questions in public health and data science.
+
+Before graduate school, I built a strong foundation in analytics and information systems through internships and project work at Apple Inc. (Beijing) and other organizations. I’m especially interested in combining statistical thinking, visualization, and applied programming to support better decisions in health, business, and operations.
+
+## R Skills Highlighted
+- Data import and wrangling with `tidyverse`, `readr`, `readxl`, `janitor`, joins, reshaping, and date handling
+- Exploratory visualization with `ggplot2`, `patchwork`, and publication-style figure export
+- Interactive dashboards using `plotly` and `flexdashboard`
+- Simulation, inference, and reproducible workflows with custom functions, `broom`, and R Markdown
+- Modeling and validation using linear regression, logistic regression, bootstrap, and cross-validation
+
+## Explore My Work
+- [R Projects and Skills](Project-list.html)
+- [Interactive Instacart Dashboard](Project.html)
+- [Interactive NYC Airbnb Dashboard](Dashboard.html)
+- [Resume](about.html)
+
+Outside of academics, I enjoy teaching, building visual explanations from data, and exploring how AI tools and statistical models can work together in real decision-making settings.

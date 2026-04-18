@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Analysis</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="proposal.html">Proposal</a>
+</li>
+<li>
+  <a href="report.html">Report</a>
+</li>
+<li>
+  <a href="Data.html">Data</a>
+</li>
+<li>
+  <a href="EDA.html">EDA</a>
+</li>
+<li>
+  <a href="Analysis.html">Analysis</a>
+</li>
+<li>
+  <a href="reference.html">Reference</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/juantang36/caffeinehealth.github.io.git">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.youtube.com/watch?v=VWEf_SvoM5s">
+    <span class="fa fa-solid fa-play"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Analysis</h1>
+
+</div>
+
+
+<div id="overview-of-analytic-strategy" class="section level2">
+<h2>Overview of analytic strategy</h2>
+<p>In this analysis, we first compared individuals (age range: 20-70)
+with and without coffee intake habits based on the results of two
+24-hour dietary recall surveys and experimental biomarker data.
+Subsequently, we employed regression models to investigate the
+dose-response relationship between caffeine intake and selected
+biomarkers.</p>
+<p>We organized the analysis in two steps:</p>
+<ul>
+<li>Comparison between groups of individuals with and without
+coffee-intake habits.</li>
+<li>Regression analyses with continuous caffeine intake as the
+exposure.</li>
+</ul>
+<p><br></p>
+</div>
+<div id="group-comparisons-coffee-intake-vs-no-coffe-intake"
+class="section level2">
+<h2>Group Comparisons: Coffee Intake vs No Coffe Intake</h2>
+<div id="coffee-intake-and-blood-pressure-pulse" class="section level3">
+<h3>Coffee Intake and Blood Pressure &amp; Pulse</h3>
+<p>To assess whether habitual coffee consumption is related to blood
+pressure and pulse, we compared systolic blood pressure (SBP), diastolic
+blood pressure (DBP), and resting pulse between adults with and without
+coffee-drinking habits. The violin plots with embedded boxplots display
+the distributions of SBP and DBP by coffee habit, and a line plot shows
+group means with 95% confidence intervals. Pulse-rate distributions were
+visualized using ridgeline density plots.</p>
+<p>The violin plots indicate that SBP and DBP distributions are very
+similar between coffee drinkers and non-drinkers. There is a slight
+upward shift in the coffee-habit group for SBP, reflected in the mean
+plot as a small increase of only a few mmHg, whereas DBP means are
+nearly identical in the two groups. In both cases, the 95% confidence
+intervals overlap substantially, suggesting that any differences in
+average blood pressure associated with habitual coffee intake are modest
+and may not be statistically or clinically important.</p>
+<p>For pulse rate, the ridgeline densities show broadly overlapping
+distributions, with the coffee-habit group trending slightly higher in
+pulse but again with only minor separation between curves. This pattern
+suggests that regular coffee drinkers may have a somewhat higher resting
+heart rate, but the magnitude of the difference appears small at the
+population level.</p>
+<p>From a cardiovascular-risk perspective, mean SBP and DBP in both
+groups fall within the normotensive to mildly elevated range, and the
+between-group differences are much smaller than thresholds used to
+define hypertension (e.g., SBP ≥ 130 mmHg). Overall, our unadjusted
+comparisons do not provide strong evidence that habitual coffee
+consumption is associated with substantial chronic elevations in blood
+pressure or resting pulse. As with the diabetes biomarkers, these
+results are cross-sectional and may be confounded by age, BMI, smoking,
+medication use, physical activity, and other lifestyle factors.
+Therefore, they should be interpreted as descriptive and
+hypothesis-generating. In subsequent regression analyses, we will
+examine dose–response relationships between caffeine intake and blood
+pressure and pulse while adjusting for key confounders.</p>
+</div>
+<div id="coffee-intake-and-sleep-status" class="section level3">
+<h3>Coffee Intake and Sleep Status</h3>
+<p>To explore whether habitual coffee consumption is related to sleep,
+we compared self-reported sleep duration between adults with and without
+coffee-intake habits. Average nightly sleep time was summarized using
+violin plots with embedded boxplots, and a paired line plot was used to
+display within-person differences between weekday and weekend sleep by
+coffee habit.</p>
+<p>The violin plots show that the overall distributions of average sleep
+duration are very similar in coffee drinkers and non-drinkers. Both
+groups cluster around roughly 7–8 hours of sleep per night, with a
+comparable spread and long tails toward shorter and longer sleep. The
+coffee-habit group appears to sleep slightly fewer hours on average, but
+the central ranges of the two distributions overlap extensively,
+suggesting that any difference in mean sleep time between coffee
+drinkers and non-drinkers is relatively small.</p>
+<p>The paired weekday–weekend plot highlights within-person patterns. In
+coffee intake groups, individuals tend to sleep more on weekends than on
+weekdays, consistent with “catch-up” sleep. The black summary lines
+indicate that the magnitude of the weekday–weekend increase is nearly
+the same for coffee drinkers and non-drinkers, implying that habitual
+coffee use does not materially alter the typical pattern of shorter
+weekday sleep and longer weekend sleep.</p>
+<p>Taken together, these descriptive results do not suggest that regular
+coffee consumption is associated with large reductions in average sleep
+duration or with a different pattern of weekday versus weekend sleep in
+this NHANES adult sample. If anything, coffee drinkers may sleep
+marginally less on average, but the between-group differences are modest
+relative to the wide variability in sleep across individuals. As with
+other outcomes, these cross-sectional comparisons rely on self-reported
+sleep and are unadjusted for potential confounders (e.g., work
+schedules, shift work, stress, mental health), and thus should be
+interpreted cautiously as descriptive rather than causal.</p>
+</div>
+<div id="coffee-intake-and-diabetes-risk" class="section level3">
+<h3>Coffee Intake and Diabetes Risk</h3>
+<p>Among participants with complete diabetes biomarker data (N = 2439),
+we compared fasting glucose, glycohemoglobin (HbA1c), and fasting
+insulin between adults with and without coffee intake habit. The bar
+plot shows mean biomarker levels with 95% confidence intervals by coffee
+habit, and the table summarizes group means, mean differences,
+confidence intervals, and p-values.</p>
+<p>Across the three biomarkers, fasting glucose and HbA1c were very
+similar in coffee drinkers and non-drinkers, whereas fasting insulin
+remained substantially lower among coffee drinkers. The mean fasting
+glucose levels were 108.89 mg/dL in the no-coffee group and 109.48 mg/dL
+in the coffee group, with a mean difference of 0.58 mg/dL (95% CI:
+–2.93, 4.10; p = 0.745). Mean HbA1c levels were 5.71% and 5.76%,
+respectively, with a difference of 0.04 percentage points (95% CI:
+–0.06, 0.15; p = 0.427). For both markers, confidence intervals include
+zero and p-values are large, indicating no statistically significant
+difference in average glycemic control between the two groups. In
+contrast, fasting insulin averaged 17.35 μU/mL in non-drinkers and 12.12
+μU/mL in coffee drinkers, with a mean difference of –5.23 μU/mL (95% CI:
+–7.89, –2.56; p ≈ 1.3×10⁻⁴), reflecting a statistically and clinically
+meaningful decrease in fasting insulin among those with a coffee
+habit.</p>
+<p>From a diabetes-risk perspective, these findings suggest that
+habitual coffee intake is not associated with worse glycemic control as
+measured by fasting glucose and HbA1c in this adult NHANES sample. At
+the same time, lower fasting insulin at similar glucose and HbA1c levels
+may be consistent with differences in insulin sensitivity or insulin
+secretion—for example, better insulin sensitivity (requiring less
+insulin to maintain comparable glucose levels) or reduced β-cell
+secretory capacity. With cross-sectional data and only three biomarkers,
+we cannot distinguish between these mechanisms, and the implications for
+long-term diabetes risk remain uncertain.</p>
+<p>Moreover, these comparisons are unadjusted and may be strongly
+influenced by confounding. Coffee drinkers in NHANES are likely to
+differ from non-drinkers in age, BMI, smoking, overall diet, physical
+activity, and socioeconomic factors, all of which affect glycemic
+control and diabetes risk. Therefore, the current results should not be
+interpreted as strong causal evidence that coffee itself increases or
+decreases diabetes risk. Instead, they highlight distinct diabetes
+biomarker profiles—particularly lower fasting insulin—among coffee-habit
+groups and motivate the next step of our analysis: regression models and
+examine dose–response relationships between caffeine intake and
+diabetes-related outcomes.</p>
+</div>
+<div id="coffee-intake-and-cardiovascular-disease-risk"
+class="section level3">
+<h3>Coffee Intake and Cardiovascular Disease Risk</h3>
+<p>To evaluate whether habitual coffee consumption is associated with
+cardiovascular risk profiles, we compared three lipid biomarkers:
+high-density lipoprotein cholesterol (HDL), low-density lipoprotein
+cholesterol (LD), and total cholesterol, between adults with and without
+coffee intake habit. The violin plot with embedded boxplot display the
+distributions of each biomarker by coffee habit, and a summary table
+reports group means, mean differences, 95% confidence intervals, and
+p-values from two-sample t-tests.</p>
+<p>Coffee drinkers had higher average levels of all three lipid markers,
+although the strength of evidence varied by biomarker.</p>
+<p>From a CVD-risk perspective, this pattern is somewhat mixed but not
+clearly adverse. The higher HDL among coffee drinkers is generally
+considered protective, as higher HDL is associated with lower
+cardiovascular risk. At the same time, coffee drinkers also show
+slightly higher total cholesterol and possibly higher LDL-C, though the
+LDL difference is small and only borderline significant. The absolute
+differences in LDL-C and total cholesterol (≈3–6 mg/dL) are relatively
+modest compared with clinical thresholds used to define dyslipidemia, so
+their practical impact on risk is likely limited in isolation.</p>
+<p>As with other outcomes in this study, these comparisons are
+cross-sectional and unadjusted. Coffee drinkers may differ from
+non-drinkers in diet, BMI, smoking, alcohol use, physical activity, and
+use of lipid-lowering medications, all of which strongly influence lipid
+levels. Consequently, the observed associations should not be
+interpreted as causal effects of coffee itself on CVD risk. Rather, they
+highlight that adults with a coffee habit in NHANES tend to have a lipid
+profile characterized by higher HDL and slightly higher total
+cholesterol, a combination whose net impact on cardiovascular risk is
+uncertain and warrants further evaluation in adjusted regression models
+and longitudinal studies.</p>
+<p><br></p>
+</div>
+</div>
+<div id="regression-analysis" class="section level2">
+<h2>Regression Analysis</h2>
+<div id="associations-between-caffeine-intake-and-blood-pressure"
+class="section level3">
+<h3>Associations Between Caffeine Intake and Blood Pressure</h3>
+<p>We explored potential dose–response relationships between caffeine
+intake and blood pressure by fitting linear regression models with daily
+caffeine intake (mg) as a continuous predictor and systolic blood
+pressure (SBP) or diastolic blood pressure (DBP) as the outcome. The
+fitted regression lines with 95% confidence bands are overlaid on
+scatterplots of blood pressure versus caffeine intake.</p>
+<p>For SBP, the estimated slope for caffeine was 0.0031 mmHg per 1 mg
+(SE 0.0020; p = 0.11), which corresponds to an increase of about 0.31
+mmHg per 100 mg of caffeine. For DBP, the slope was even smaller—0.00057
+mmHg per 1 mg (SE 0.00124; p = 0.65), or roughly 0.06 mmHg per 100 mg of
+caffeine. In both models, the R² values were essentially zero (≈0.0009
+for SBP, ≈0.00007 for DBP), indicating that caffeine intake explains
+virtually none of the substantial between-person variability in blood
+pressure.</p>
+<p>Visually, the scatterplots show dense clouds of points at
+low-to-moderate caffeine intakes with blood pressure values spanning a
+wide range, and the fitted regression lines are almost flat. The
+slightly positive slope for SBP is directionally consistent with our
+earlier group comparisons, in which habitual coffee drinkers had
+marginally higher mean systolic pressure than non-drinkers. However, the
+magnitude of the estimated effect—on the order of a fraction of a mmHg
+per 100 mg of caffeine—is extremely small and imprecisely estimated, and
+DBP shows no meaningful relationship with caffeine intake.</p>
+<p>Taken together, these regression analyses suggest that, within the
+range of usual caffeine consumption observed in NHANES, caffeine intake
+is at most very weakly associated with higher systolic blood pressure
+and essentially unrelated to diastolic blood pressure. Any true effect
+of caffeine on chronic resting blood pressure appears to be minimal
+relative to the influence of other factors such as age, BMI,
+antihypertensive medication use, dietary sodium, and physical activity.
+As with our other models, these results are cross-sectional and
+unadjusted, and thus are best interpreted as descriptive and
+hypothesis-generating rather than as evidence of a clinically important
+causal effect of caffeine on blood pressure.</p>
+</div>
+<div id="associations-between-caffeine-intake-and-sleep-status"
+class="section level3">
+<h3>Associations Between Caffeine Intake and Sleep Status</h3>
+<p>We then evaluated whether higher caffeine intake is associated with
+shorter sleep duration using a linear regression model with daily
+caffeine intake (mg) as a continuous predictor and average nightly sleep
+time (hours) as the outcome. The fitted regression line with a 95%
+confidence band is overlaid on the scatterplot of sleep duration versus
+caffeine intake.</p>
+<p>The estimated intercept was 7.83 hours of sleep at zero caffeine, and
+the slope for caffeine was –0.00022 hours per 1 mg (SE 0.00016; p =
+0.18). This corresponds to roughly –0.022 hours (≈1.3 minutes) less
+sleep per 100 mg of caffeine. Although the point estimate suggests that
+higher caffeine intake is directionally associated with slightly shorter
+sleep, the confidence interval is wide, the p-value is above
+conventional significance thresholds, and the R² is essentially zero
+(≈0.0006), indicating that caffeine explains almost none of the
+substantial individual variability in sleep duration.</p>
+<p>The scatterplot shows a dense cloud of observations clustered around
+7–8 hours of sleep across a broad range of caffeine intakes, with only a
+very subtle downward tilt in the fitted line. This pattern is consistent
+with our earlier group comparisons, where coffee drinkers appeared to
+sleep marginally less on average than non-drinkers, but it also
+underscores that the magnitude of the association is very small. In
+practical terms, differences in typical caffeine intake within this
+NHANES sample are unlikely to translate into large changes in total
+sleep time; factors such as work schedules, stress, shift work, and
+underlying health seem to play a much larger role. Thus, while our
+regression results are compatible with the idea that heavier caffeine
+consumers may sleep slightly less, they do not provide strong evidence
+that caffeine intake has a substantial or clinically meaningful impact
+on average sleep duration.</p>
+</div>
+<div id="associations-between-caffeine-intake-and-diabetes-biomarkers"
+class="section level3">
+<h3>Associations Between Caffeine Intake and Diabetes Biomarkers</h3>
+<p>We examined dose–response relationships between caffeine intake and
+diabetes-related biomarkers using simple linear regression models with
+daily caffeine intake (mg) as a continuous exposure and HbA1c, fasting
+insulin, or fasting glucose as outcomes. Fitted regression lines were
+overlaid on scatterplots to aid interpretation.</p>
+<p>Although none of the regression coefficients reached conventional
+statistical significance, the direction and pattern of the estimates are
+broadly consistent with a potential influence of caffeine on glucose
+metabolism, especially for insulin. For HbA1c, the estimated slope for
+caffeine was slightly negative (–0.000138 percentage points per 1 mg; p
+= 0.51), corresponding to an approximately 0.014 percentage-point
+decrease in HbA1c per 100 mg of caffeine, albeit with wide confidence
+intervals. Fasting glucose showed a similarly small negative slope
+(–0.0039 mg/dL per 1 mg; p = 0.54).</p>
+<p>The most notable pattern was observed for fasting insulin, where
+higher caffeine intake was associated with lower insulin levels (–0.0037
+μU/mL per 1 mg; p = 0.15), or roughly 0.37 μU/mL lower insulin per 100
+mg of caffeine. In the scatterplot, individuals with very high fasting
+insulin concentrations are concentrated among those with little or no
+caffeine intake, whereas participants with higher caffeine intake tend
+to have relatively low insulin levels. This visual pattern, together
+with the negative regression slope, is compatible with the hypothesis
+that habitual caffeine consumption may be linked to lower insulin
+requirements at a given level of glycemia, i.e., potentially better
+insulin sensitivity.</p>
+<p>However, these apparent trends are modest in magnitude and
+imprecisely estimated, as reflected in the wide confidence intervals and
+very low R² values. Caffeine intake explains only a tiny fraction of the
+between-person variation in HbA1c, glucose, or insulin, and the
+cross-sectional, unadjusted nature of these models means that residual
+confounding by age, adiposity, diet quality, physical activity,
+medication use, and underlying disease is likely. Thus, while our
+regression analyses do not demonstrate a strong or definitive
+dose–response relationship, they do suggest that higher caffeine intake
+is not associated with worse glycemic control and may be associated with
+slightly lower fasting insulin, in line with the group comparisons
+between coffee drinkers and non-drinkers. These findings are best viewed
+as hypothesis-generating and motivate more detailed, adjusted modeling
+of insulin resistance and diabetes outcomes in future work.</p>
+</div>
+<div id="associations-between-caffeine-intake-and-cvd-biomarkers"
+class="section level3">
+<h3>Associations Between Caffeine Intake and CVD Biomarkers</h3>
+<p>We also investigated whether higher caffeine intake is related to
+cardiovascular risk profiles by fitting linear regression models with
+daily caffeine intake (mg) as a continuous exposure and total
+cholesterol, HDL, or LDL as outcomes. For each biomarker, we fit a
+separate model and visualized the fitted regression line with a 95%
+confidence band overlaid on scatterplots of caffeine intake versus lipid
+level.</p>
+<p>Overall, caffeine intake showed only weak and imprecise linear
+associations with lipid biomarkers, but the directions of the estimated
+slopes are broadly consistent with the group comparisons between coffee
+drinkers and non-drinkers. For total cholesterol, the estimated slope
+was +0.0052 mg/dL per 1 mg of caffeine (SE 0.0083; p = 0.53),
+corresponding to an increase of about +0.52 mg/dL per 100 mg of
+caffeine. For LDL, the slope was +0.0081 mg/dL per 1 mg (SE 0.0072; p =
+0.26), or roughly +0.81 mg/dL per 100 mg of caffeine. In contrast, HDL
+showed a small negative slope of –0.0020 mg/dL per 1 mg (SE 0.0029; p =
+0.50), equivalent to about –0.20 mg/dL per 100 mg of caffeine. In all
+three models, R² values were essentially zero, indicating that caffeine
+intake explains almost none of the substantial between-person
+variability in lipid levels.</p>
+<p>The scatterplots support these numerical findings: most observations
+cluster at low-to-moderate caffeine intakes with a wide spread in lipid
+levels, and the fitted regression lines are nearly flat with wide
+confidence bands. Nonetheless, the slightly positive slopes for total
+cholesterol and LDL and the slightly negative slope for HDL are
+directionally compatible with the cross-sectional comparisons, where
+habitual coffee drinkers tended to have somewhat higher total
+cholesterol and LDL alongside higher HDL. Taken together, these patterns
+suggest that, if caffeine intake does influence lipid levels, the effect
+is likely small and complex, and easily overshadowed by other
+determinants such as diet quality, adiposity, smoking, alcohol use,
+medication, and genetic factors.</p>
+<p>Because these models are cross-sectional, unadjusted, and have very
+low explanatory power, they should not be interpreted as evidence that
+increasing caffeine intake meaningfully worsens or improves
+cardiovascular risk. Rather, the regression results indicate that within
+the observed range of everyday caffeine consumption, any dose–response
+relationship with lipid biomarkers is subtle at best, and they primarily
+serve to complement our group comparisons and to generate hypotheses for
+more detailed, adjusted analyses in future work.</p>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Data</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="proposal.html">Proposal</a>
+</li>
+<li>
+  <a href="report.html">Report</a>
+</li>
+<li>
+  <a href="Data.html">Data</a>
+</li>
+<li>
+  <a href="EDA.html">EDA</a>
+</li>
+<li>
+  <a href="Analysis.html">Analysis</a>
+</li>
+<li>
+  <a href="reference.html">Reference</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/juantang36/caffeinehealth.github.io.git">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://www.youtube.com/watch?v=VWEf_SvoM5s">
+    <span class="fa fa-solid fa-play"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Data</h1>
+
+</div>
+
+
+<div id="data-summary" class="section level2">
+<h2>Data Summary</h2>
+<div id="nhanes-dataset" class="section level3">
+<h3>NHANES Dataset</h3>
+<p>We used data from the <strong>2021–2023 National Health and Nutrition
+Examination Survey (NHANES)</strong>, an ongoing program conducted by
+the U.S. Centers for Disease Control and Prevention (CDC). NHANES
+combines interviews, physical examinations, and laboratory measurements
+to provide nationally representative information on the health and
+nutritional status of the U.S. population.</p>
+<p>All data files are publicly available from the CDC website and can be
+downloaded here:<br />
+<a
+href="https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2021-2023">2021-2023
+NHANES</a></p>
+<p>Our project draws on several NHANES data:</p>
+<ul>
+<li><strong>Demographic data</strong></li>
+<li><strong>Dietary data</strong>
+<ul>
+<li>Individual Foods files for 24-hour recall across two non-consecutive
+days (DR1IFF, DR2IFF)</li>
+<li>Total Nutrient Intakes (DR1TOT, DR2TOT)</li>
+</ul></li>
+<li><strong>Laboratory data</strong>
+<ul>
+<li>Glycohemoglobin (GHB_L)</li>
+<li>Plasma fasting glucose (GLU_L)</li>
+<li>Insulin (INS_L)</li>
+<li>Lipid panel: HDL (HDL_L), LDL (TRIGLY_L), total cholesterol
+(TCHOL_L)</li>
+</ul></li>
+<li><strong>Examination data</strong>
+<ul>
+<li>Blood pressure and pulse data (BPXO_L)</li>
+</ul></li>
+</ul>
+<hr />
+</div>
+<div id="construction-of-the-analytic-dataset" class="section level3">
+<h3>Construction of the Analytic Dataset</h3>
+<p>The first major step in our workflow was to build <strong>a single,
+unified “analytic” dataset</strong> that contains all relevant NHANES
+variables merged into one table (<code>analytic.csv</code>). This file
+serves as the foundation for all subsequent analyses.</p>
+<p>All datasets mentioned above were merged using the unique participant
+identifier <code>SEQN</code>.</p>
+<hr />
+</div>
+<div id="exposure-variable-coffee-habit" class="section level3">
+<h3>Exposure Variable: Coffee Habit</h3>
+<p>Coffee intake was defined using the 24-hour dietary recall data and
+USDA food codes:</p>
+<ol style="list-style-type: decimal">
+<li>Food codes whose descriptions contained the keyword
+<strong>“coffee”</strong> were identified from the Individual Foods
+files.</li>
+<li>For each participant, we determined whether coffee was consumed on
+Day 1 and Day 2.</li>
+<li>Participants were then classified as:
+<ul>
+<li><strong>Yes</strong>: consumed coffee on <em>both</em> dietary
+recall days<br />
+</li>
+<li><strong>No</strong>: did <em>not</em> consume coffee on either
+recall day</li>
+</ul></li>
+</ol>
+<p>Participants who consumed coffee on only one day were excluded from
+the binary “coffee habit” analyses. This yielded two key exposure
+variables:</p>
+<ul>
+<li><code>coffee_habit_binary</code> (TRUE for Yes, FALSE for No)<br />
+</li>
+<li><code>coffee_habit</code> (factor with levels “No”, “Yes”) used for
+visualization and statistical tests.</li>
+</ul>
+</div>
+<div id="caffeine-intake-continuous-exposure-for-regression"
+class="section level3">
+<h3>Caffeine Intake (Continuous Exposure for Regression)</h3>
+<p>In addition to coffee habit, we computed <strong>total caffeine
+intake (mg/day)</strong> to examine dose–response relationships. New
+variable <code>caffeine_mg</code> was calculated by averaging total
+caffeine intake on both recall days: Average caffeine intake:</p>
+<p><span class="math display">\[
+\text{caffeine_mg} = \frac{\text{Day 1 caffeine} + \text{Day 2
+caffeine}}{2}
+\]</span></p>
+<p>Data was drawn from NHANES’s total nutrient intake files (DR1TOT /
+DR2TOT) including:</p>
+<ul>
+<li><code>DR1TCAFF</code> – total caffeine intake on Day 1 (mg)</li>
+<li><code>DR2TCAFF</code> – total caffeine intake on Day 2 (mg)</li>
+</ul>
+</div>
+</div>
+<div id="data-cleaning-part-one" class="section level2">
+<h2>Data Cleaning: Part One</h2>
+<p>All data processing was conducted in <strong>RStudio</strong> using
+<strong>R Markdown</strong> and tidyverse tools.</p>
+<p>In the first cleaning stage, we:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Imported and standardized datasets</strong></p>
+<ul>
+<li>NHANES <code>.XPT</code> files were read using
+<code>haven::read_xpt()</code>.</li>
+<li>Variable names were converted to snake_case using
+<code>janitor::clean_names()</code> for consistency.</li>
+<li>key data files are renamed for clarity.</li>
+<li>Key laboratory variables were renamed for clarity, for example:
+<ul>
+<li><code>lbxtc</code> → <code>total_cholesterol</code></li>
+<li><code>lbdhdd</code> → <code>hdl</code></li>
+<li><code>lbdldlm</code> → <code>ldl</code></li>
+<li><code>lbxgh</code> → <code>glycohemoglobin</code></li>
+<li><code>lbxglu</code> → <code>glucose_mgdl</code></li>
+<li><code>lbxin</code> → <code>insulin_uuml</code></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Merged NHANES modules</strong></p>
+<ul>
+<li>Demographic, laboratory, and examination datasets were merged by
+<code>seqn</code>, ending up with a combined dataset
+<code>analytic.csv</code>.</li>
+</ul></li>
+<li><p><strong>Constructed coffee habit variables</strong></p>
+<ul>
+<li>Using USDA food codes, we flagged all coffee-containing items on
+each recall day.</li>
+<li>Participants were classified based on consumption across both
+dietary recall days.</li>
+<li>We then created <code>coffee_habit_binary</code> and
+<code>coffee_habit</code> as defined above.</li>
+</ul></li>
+<li><p><strong>Remove missing values and age filtering</strong></p></li>
+</ol>
+<ul>
+<li>Participants missing any of the necessary biomarkers (blood
+pressure, pulse, sleep, diabetes, CVD) were excluded.</li>
+<li>Participants who drank coffee on only one of the two recall days
+were excluded due to inconsistency in coffee habit.</li>
+<li>To focus on adult participants and avoid extremes, we restricted
+analyses to:</li>
+</ul>
+<p><span class="math display">\[
+20 \leq \text{age} \leq 70
+\]</span></p>
+<p>This age subset is used in all biomarker analyses.</p>
+<p>The result of Part One was a wide analytic dataset containing merged
+dietary and biomarker data, along with an initial classification of
+coffee consumption.</p>
+<hr />
+</div>
+<div id="data-cleaning-part-two" class="section level2">
+<h2>Data Cleaning: Part Two</h2>
+<p>The second cleaning stage focused on preparing an analysis-ready
+data/variables for our health outcomes.</p>
+<p>Key steps included:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Ensuring valid and complete biomarker data</strong></p>
+<ul>
+<li>Continuous biomarker variables (glucose, glycohemoglobin, insulin,
+HDL, LDL, total cholesterol) were checked for non-numeric entries and
+converted to numeric where necessary.</li>
+<li>Participants with missing values for any biomarker used in a given
+analysis were excluded to create complete-case subsets.</li>
+</ul></li>
+<li><p><strong>Recoding and factor creation</strong></p>
+<ul>
+<li><code>coffee_habit</code> was encoded as a factor with levels
+ordered as <code>No</code>, <code>Yes</code>.</li>
+</ul></li>
+<li><p><strong>Creating tidy long-format datasets for
+plotting</strong></p>
+<ul>
+<li>For cardiovascular biomarkers, we constructed a long-format dataset
+<code>cvd_long</code> with variables:
+<ul>
+<li><code>coffee_habit</code></li>
+<li><code>biomarker</code> (HDL, LDL, Total Cholesterol)</li>
+<li><code>value</code> (mg/dL)</li>
+</ul></li>
+<li>For diabetes biomarkers, we created <code>diabetes_long</code> with:
+<ul>
+<li><code>coffee_habit</code></li>
+<li><code>biomarker</code> (glucose, glycohemoglobin, insulin)</li>
+<li><code>value</code></li>
+</ul></li>
+</ul></li>
+<li><p><strong>Creating analysis-ready variable for
+regression</strong></p></li>
+</ol>
+<ul>
+<li><code>caffeine_mg</code> is computed and used in linear regression
+models</li>
+<li>This variable captures <strong>dose</strong> rather than binary
+consumption</li>
+</ul>
+<p>These tidy datasets were used to generate violin/boxplots and to run
+group-wise t-tests.</p>
+<hr />
+</div>
+<div id="summary-of-variables-used" class="section level2">
+<h2>Summary of Variables Used</h2>
+<div id="exposure-variables" class="section level3">
+<h3><strong>Exposure Variables</strong></h3>
+<ul>
+<li><code>coffee_habit_binary</code> : whether the individual have
+coffee drinking habit (TRUE/FALSE)</li>
+<li><code>coffee_habit</code>: original variable (“No”, “Yes”)</li>
+<li><code>caffeine_mg</code>: the average daily caffeine intake (mg) by
+the individual (continuous caffeine intake)</li>
+</ul>
+</div>
+<div id="blood-pressure-biomarkers" class="section level3">
+<h3><strong>Blood Pressure Biomarkers</strong></h3>
+<ul>
+<li><code>bpxsy1, bpxsy2, bpxsy3</code> Systolic Blood Pressure repeated
+measurements</li>
+<li><code>sbp</code>: mean systolic blood pressure (mmHg)</li>
+</ul>
+</div>
+<div id="sleep-biomarkers" class="section level3">
+<h3><strong>Sleep Biomarkers</strong></h3>
+<ul>
+<li><code>slphours</code>: self-reported sleep duration (hours)</li>
+<li><code>slpdistrb</code>: indicator of sleep disturbance (“No”,
+“Yes”)</li>
+</ul>
+</div>
+<div id="diabetes-biomarkers" class="section level3">
+<h3><strong>Diabetes Biomarkers</strong></h3>
+<ul>
+<li><code>glycohemoglobin</code>: Glycohemoglobin (%)</li>
+<li><code>glucose_mgdl</code>: Fasting Glucose (mg/dL)</li>
+<li><code>insulin_uuml</code>: Insulin (µU/mL)</li>
+</ul>
+</div>
+<div id="cvd-biomarkers" class="section level3">
+<h3><strong>CVD Biomarkers</strong></h3>
+<ul>
+<li><code>hdl</code>: Direct HDL-Cholesterol (mg/dL)</li>
+<li><code>ldl</code>: LDL-Cholesterol, Martin-Hopkins measurement
+(mg/dL)</li>
+<li><code>total_cholesterol</code>: Total Cholesterol (mg/dL)</li>
+</ul>
+</div>
+<div id="demographics" class="section level3">
+<h3><strong>Demographics</strong></h3>
+<ul>
+<li><code>seqn</code>: Respondent sequence number</li>
+<li><code>ridageyr</code>: Age in years at screening</li>
+</ul>
+<hr />
+<div id="notes" class="section level4">
+<h4>Notes</h4>
+<ul>
+<li>All analyses (plots, t-tests, regressions) use <strong>subsets taken
+from analytic.csv</strong>, not raw NHANES files.<br />
+</li>
+<li>The master dataset contains <strong>all participants, all
+examination/nutrient/lab variables</strong>, and is filtered only at the
+step of constructing domain-specific datasets.<br />
+</li>
+<li>This design ensures reproducibility and avoids repeated merging of
+NHANES modules.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

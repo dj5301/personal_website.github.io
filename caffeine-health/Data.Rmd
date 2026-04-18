@@ -1,0 +1,190 @@
+---
+title: "Data"
+output: 
+  html_document:
+    code_folding: hide
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Data Summary
+
+### NHANES Dataset
+
+We used data from the **2021–2023 National Health and Nutrition Examination Survey (NHANES)**, an ongoing program conducted by the U.S. Centers for Disease Control and Prevention (CDC). NHANES combines interviews, physical examinations, and laboratory measurements to provide nationally representative information on the health and nutritional status of the U.S. population.
+
+All data files are publicly available from the CDC website and can be downloaded here:  
+[2021-2023 NHANES](https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2021-2023)
+
+Our project draws on several NHANES data:
+
+- **Demographic data**
+- **Dietary data**
+  - Individual Foods files for 24-hour recall across two non-consecutive days (DR1IFF, DR2IFF)
+  - Total Nutrient Intakes (DR1TOT, DR2TOT)
+- **Laboratory data**
+  - Glycohemoglobin (GHB_L)
+  - Plasma fasting glucose (GLU_L)
+  - Insulin (INS_L)
+  - Lipid panel: HDL (HDL_L), LDL (TRIGLY_L), total cholesterol (TCHOL_L)
+- **Examination data**
+  - Blood pressure and pulse data (BPXO_L)
+
+---
+
+### Construction of the Analytic Dataset
+
+The first major step in our workflow was to build **a single, unified “analytic” dataset** that contains all relevant NHANES variables merged into one table (`analytic.csv`). This file serves as the foundation for all subsequent analyses.
+
+All datasets mentioned above were merged using the unique participant identifier `SEQN`.
+
+---
+
+### Exposure Variable: Coffee Habit
+
+Coffee intake was defined using the 24-hour dietary recall data and USDA food codes:
+
+1. Food codes whose descriptions contained the keyword **“coffee”** were identified from the Individual Foods files.
+2. For each participant, we determined whether coffee was consumed on Day 1 and Day 2.
+3. Participants were then classified as:
+   - **Yes**: consumed coffee on *both* dietary recall days  
+   - **No**: did *not* consume coffee on either recall day  
+
+Participants who consumed coffee on only one day were excluded from the binary “coffee habit” analyses. This yielded two key exposure variables:
+
+- `coffee_habit_binary` (TRUE for Yes, FALSE for No)  
+- `coffee_habit` (factor with levels “No”, “Yes”) used for visualization and statistical tests.
+
+### Caffeine Intake (Continuous Exposure for Regression)
+
+In addition to coffee habit, we computed **total caffeine intake (mg/day)** to examine dose–response relationships. New variable `caffeine_mg` was calculated by averaging total caffeine intake on both recall days:
+Average caffeine intake:
+
+\[
+\text{caffeine_mg} = \frac{\text{Day 1 caffeine} + \text{Day 2 caffeine}}{2}
+\]
+
+
+Data was drawn from NHANES's total nutrient intake files (DR1TOT / DR2TOT) including:
+
+- `DR1TCAFF` – total caffeine intake on Day 1 (mg)
+- `DR2TCAFF` – total caffeine intake on Day 2 (mg)
+
+
+## Data Cleaning: Part One
+
+All data processing was conducted in **RStudio** using **R Markdown** and tidyverse tools.
+
+In the first cleaning stage, we:
+
+1. **Imported and standardized datasets**
+
+   - NHANES `.XPT` files were read using `haven::read_xpt()`.
+   - Variable names were converted to snake_case using `janitor::clean_names()` for consistency.
+   - key data files are renamed for clarity.
+   - Key laboratory variables were renamed for clarity, for example:
+     - `lbxtc` → `total_cholesterol`
+     - `lbdhdd` → `hdl`
+     - `lbdldlm` → `ldl`
+     - `lbxgh` → `glycohemoglobin`
+     - `lbxglu` → `glucose_mgdl`
+     - `lbxin` → `insulin_uuml`
+
+2. **Merged NHANES modules**
+
+   - Demographic, laboratory, and examination datasets were merged by `seqn`, ending up with a combined dataset `analytic.csv`.
+
+3. **Constructed coffee habit variables**
+
+   - Using USDA food codes, we flagged all coffee-containing items on each recall day.
+   - Participants were classified based on consumption across both dietary recall days. 
+   - We then created `coffee_habit_binary` and `coffee_habit` as defined above.
+
+4. **Remove missing values and age filtering**
+  - Participants missing any of the necessary biomarkers (blood pressure, pulse, sleep, diabetes, CVD) were excluded. 
+  - Participants who drank coffee on only one of the two recall days were excluded due to inconsistency in coffee habit. 
+  - To focus on adult participants and avoid extremes, we restricted analyses to:
+
+\[
+20 \leq \text{age} \leq 70
+\]
+
+This age subset is used in all biomarker analyses.
+
+The result of Part One was a wide analytic dataset containing merged dietary and biomarker data, along with an initial classification of coffee consumption.
+
+---
+
+## Data Cleaning: Part Two
+
+The second cleaning stage focused on preparing an analysis-ready data/variables for our health outcomes.
+
+Key steps included:
+
+1. **Ensuring valid and complete biomarker data**
+
+   - Continuous biomarker variables (glucose, glycohemoglobin, insulin, HDL, LDL, total cholesterol) were checked for non-numeric entries and converted to numeric where necessary.
+   - Participants with missing values for any biomarker used in a given analysis were excluded to create complete-case subsets.
+
+2. **Recoding and factor creation**
+
+   - `coffee_habit` was encoded as a factor with levels ordered as `No`, `Yes`.
+
+3. **Creating tidy long-format datasets for plotting**
+
+   - For cardiovascular biomarkers, we constructed a long-format dataset `cvd_long` with variables:
+     - `coffee_habit`
+     - `biomarker` (HDL, LDL, Total Cholesterol)
+     - `value` (mg/dL)
+   - For diabetes biomarkers, we created `diabetes_long` with:
+     - `coffee_habit`
+     - `biomarker` (glucose, glycohemoglobin, insulin)
+     - `value`
+4. **Creating analysis-ready variable for regression**
+- `caffeine_mg` is computed and used in linear regression models
+- This variable captures **dose** rather than binary consumption
+
+These tidy datasets were used to generate violin/boxplots and to run group-wise t-tests.
+   
+---
+
+## Summary of Variables Used
+
+### **Exposure Variables**
+- `coffee_habit_binary` : whether the individual have coffee drinking habit (TRUE/FALSE)
+- `coffee_habit`: original variable ("No", "Yes")
+- `caffeine_mg`: the average daily caffeine intake (mg) by the individual (continuous caffeine intake)
+
+### **Blood Pressure Biomarkers**
+- `bpxsy1, bpxsy2, bpxsy3` Systolic Blood Pressure repeated measurements
+- `sbp`: mean systolic blood pressure (mmHg)
+
+### **Sleep Biomarkers**
+- `slphours`: self-reported sleep duration (hours)
+- `slpdistrb`: indicator of sleep disturbance ("No", "Yes")
+
+### **Diabetes Biomarkers**
+- `glycohemoglobin`: Glycohemoglobin (%) 
+- `glucose_mgdl`: Fasting Glucose (mg/dL)
+- `insulin_uuml`: Insulin (µU/mL)
+
+### **CVD Biomarkers**
+- `hdl`: Direct HDL-Cholesterol (mg/dL)
+- `ldl`: LDL-Cholesterol, Martin-Hopkins measurement (mg/dL)
+- `total_cholesterol`: Total Cholesterol (mg/dL)
+
+### **Demographics**
+- `seqn`: Respondent sequence number
+- `ridageyr`: Age in years at screening
+
+---
+#### Notes
+- All analyses (plots, t-tests, regressions) use **subsets taken from analytic.csv**, not raw NHANES files.  
+- The master dataset contains **all participants, all examination/nutrient/lab variables**, and is filtered only at the step of constructing domain-specific datasets.  
+- This design ensures reproducibility and avoids repeated merging of NHANES modules.
+

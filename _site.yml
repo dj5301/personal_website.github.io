@@ -1,0 +1,21 @@
+name: "Personal Website"
+output_dir: "."
+navbar:
+  title: "Profile"
+  left:
+    - text: "Home"
+      href: index.html
+  right:
+    - text: "R Projects"
+      href: Project-list.html
+    - text: "Resume"
+      href: about.html
+    - icon: fa-envelope fa-lg
+      href: mailto:<dj2763@cumc.columbia.edu>
+    - icon: fa-github fa-lg
+      href: https://github.com/dj2763/
+    - icon: fa-brands fa-linkedin
+      href: https://www.linkedin.com/in/alvin-jiang-7009212a4/
+output:
+  html_document:
+    theme: cerulean
