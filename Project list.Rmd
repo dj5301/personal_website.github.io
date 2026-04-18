@@ -65,6 +65,15 @@ These assignments show a progression from foundational R programming to end-to-e
 
 [View report](project-6/project-6.html)
 
+## Featured Collaborative Project
+
+### Caffeine Health: Coffee Intake and Multidimensional Health Outcomes
+**Focus:** Explore how coffee-related caffeine exposure is associated with blood pressure, sleep, diabetes biomarkers, and cardiovascular risk measures using NHANES 2021-2023 data.
+
+**R skills used:** multi-page R Markdown reporting, NHANES data integration, exploratory analysis, regression modeling, and portfolio-style project communication.
+
+[View project site](caffeine-health/index.html)
+
 ## Interactive Work
 
 In addition to static reports, I also built interactive dashboards to explore ordering behavior and short-term housing data in a more visual format.

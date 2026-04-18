@@ -22,6 +22,7 @@ Before graduate school, I built a strong foundation in analytics and information
 
 ## Explore My Work
 - [R Projects and Skills](Project-list.html)
+- [Featured Coffee and Health Research Project](caffeine-health/index.html)
 - [Interactive Instacart Dashboard](Project.html)
 - [Interactive NYC Airbnb Dashboard](Dashboard.html)
 - [Resume](about.html)
